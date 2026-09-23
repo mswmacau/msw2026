@@ -1,0 +1,34 @@
+# ============================================================
+#  正式環境一鍵啟動（有 Docker 的主機 / VPS 直接可用）
+#  用法：
+#    1. cp web/.env.example web/.env 並填入真實值
+#    2. docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# ============================================================
+services:
+  wordpress:
+    restart: always
+    environment:
+      WORDPRESS_DEBUG: 0
+
+  nginx:
+    restart: always
+    ports:
+      - "80:80"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: msw-web
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://msw:msw_app_pw_2026@db:3306/msw_app"
+      NEXTAUTH_URL: "https://你的網域"
+      NEXTAUTH_SECRET: "請在正式環境換成強密碼"
+      WP_URL: "http://nginx"
+      NEXT_PUBLIC_WP_URL: "https://wp.你的網域"
+    ports:
+      - "3000:3000"

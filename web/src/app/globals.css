@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0f0f0f;
+  --ink-2: #1a1a1a;
+  --ink-3: #262626;
+  --white: #ffffff;
+  --mist: #f5f5f7;
+  --cobalt: #0047ab;
+  --cobalt-bright: #0057ff;
+  --energy: #e3001b;
+  --energy-bright: #ff2d2d;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ink);
+  color: var(--white);
+  font-feature-settings: 'palt' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--cobalt-bright);
+  color: #fff;
+}
+
+/* ---------- 捲軸 ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cobalt);
+}
+
+@layer components {
+  .container-msw {
+    @apply mx-auto w-full max-w-[1280px] px-5 lg:px-8;
+  }
+
+  /* 主按鈕：活力紅，斜切角呼應街頭感 */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5
+           text-[15px] font-bold tracking-wide transition-all duration-300
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-energy text-white hover:bg-energyBright
+           shadow-[0_8px_30px_-8px_rgba(227,0,27,.7)] hover:shadow-[0_12px_40px_-8px_rgba(255,45,45,.85)]
+           hover:-translate-y-0.5;
+  }
+  .btn-cobalt {
+    @apply btn bg-cobaltBright text-white hover:bg-cobalt
+           shadow-[0_8px_30px_-8px_rgba(0,87,255,.7)] hover:-translate-y-0.5;
+  }
+  .btn-ghost {
+    @apply btn border border-white/25 text-white hover:border-white hover:bg-white/10;
+  }
+  .btn-light {
+    @apply btn bg-white text-ink hover:bg-mist;
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/10 bg-ink2 p-6 transition-all duration-300;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1.5 hover:border-cobaltBright/60 hover:bg-ink3
+           hover:shadow-[0_20px_50px_-20px_rgba(0,87,255,.55)];
+  }
+
+  .section {
+    @apply py-20 lg:py-28;
+  }
+  .section-light {
+    @apply bg-mist text-ink;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[.2em] text-cobaltBright;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply block h-[2px] w-8 bg-energy;
+  }
+
+  .h1 {
+    @apply text-[2.6rem] font-black leading-[1.15] tracking-tight sm:text-6xl lg:text-[4.2rem];
+  }
+  .h2 {
+    @apply text-[2rem] font-black leading-tight tracking-tight sm:text-[2.6rem] lg:text-[3rem];
+  }
+  .h3 {
+    @apply text-xl font-bold sm:text-2xl;
+  }
+  .lead {
+    @apply text-base leading-relaxed text-white/70 sm:text-lg;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold;
+  }
+  .chip-pending {
+    @apply chip bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30;
+  }
+  .chip-approved {
+    @apply chip bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30;
+  }
+  .chip-rejected {
+    @apply chip bg-energy/15 text-energyBright ring-1 ring-energy/30;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-white/15 bg-ink3 px-4 py-3 text-white
+           placeholder:text-white/35 outline-none transition
+           focus:border-cobaltBright focus:ring-2 focus:ring-cobaltBright/25;
+  }
+  .label {
+    @apply mb-2 block text-sm font-semibold text-white/80;
+  }
+
+  .grid-noise {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-white via-white to-cobaltBright bg-clip-text text-transparent;
+  }
+}

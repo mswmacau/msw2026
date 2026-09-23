@@ -1,0 +1,5 @@
+node_modules/
+.next/
+web/public/uploads/
+*.log
+.DS_Store

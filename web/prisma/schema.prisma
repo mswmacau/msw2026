@@ -1,0 +1,163 @@
+// MSW 街健館 — 會員 / 積分 / 活動數據模型
+// 資料庫：msw_app（與 WordPress 同一個 MySQL 實例，但獨立 schema）
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- NextAuth 標準表 ----------
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- 會員 ----------
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String? // Email 註冊時使用（Google 登入則為 null）
+  role          Role      @default(MEMBER)
+  phone         String?
+  displayName   String? // 街健館暱稱
+  avatarUrl     String?
+  bio           String?   @db.Text
+
+  points        Int       @default(0) // 目前可用積分
+  totalPoints   Int       @default(0) // 歷史累積積分
+
+  accounts      Account[]
+  sessions      Session[]
+  runRecords    RunRecord[]
+  checkIns      TrainingCheckIn[]
+  coupons       Coupon[]
+  pointLogs     PointLog[]
+  reviewsMade   RunRecord[]           @relation("Reviewer")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+// ---------- 跑步紀錄（上傳截圖 + 輸入公里數）----------
+model RunRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  km           Decimal  @db.Decimal(8, 2)
+  screenshotUrl String  @db.Text // 上傳的跑步截圖
+  periodMonth  String   @db.Char(7) // 所屬月份，例如 "2026-09"
+  note         String?  @db.Text
+  status       RunStatus @default(PENDING)
+  rejectReason String?  @db.Text
+  reviewedAt   DateTime?
+  reviewerId   String?
+  reviewer     User?    @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+
+  @@index([userId, periodMonth])
+  @@index([status])
+  @@index([periodMonth])
+}
+
+enum RunStatus {
+  PENDING // 待管理員確認
+  APPROVED // 已確認，計入累積
+  REJECTED // 已駁回
+}
+
+// ---------- 定期訓練活動簽到（每週一 20:00-21:00）----------
+model TrainingCheckIn {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionDate DateTime // 該次訓練的日期
+  points      Int      @default(10)
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, sessionDate])
+  @@index([sessionDate])
+}
+
+// ---------- 積分明細 ----------
+model PointLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int // 正數加分，負數扣分
+  reason    String   @db.VarChar(255)
+  refType   String?  @db.VarChar(50) // RUN / TRAINING / MONTHLY_GOAL / COUPON / MANUAL
+  refId     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ---------- 優惠券 ----------
+model Coupon {
+  id         String       @id @default(cuid())
+  code       String       @unique
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String       @db.VarChar(255)
+  description String?     @db.Text
+  discount   String       @db.VarChar(100) // 例如 "8 折" / "MOP 100"
+  periodMonth String      @db.Char(7) // 獎勵歸屬月份
+  status     CouponStatus @default(UNUSED)
+  usedAt     DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime     @default(now())
+
+  @@index([userId])
+  @@index([periodMonth])
+}
+
+enum CouponStatus {
+  UNUSED
+  USED
+  EXPIRED
+}
