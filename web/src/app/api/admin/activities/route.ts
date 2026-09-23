@@ -3,14 +3,18 @@ import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { FALLBACK_ACTIVITIES } from '@/lib/events';
 
+/**
+ * 產生網址代稱。
+ * 注意：只保留英數字，中文一律轉成連字號。
+ * 原因是 Next.js 動態路由對非 ASCII 的 slug 比對不穩，會讓活動內頁變成 404。
+ */
 function slugify(s: string) {
-  return (
-    s
-      .toLowerCase()
-      .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 60) || `act-${Date.now()}`
-  );
+  const out = (s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+  return out || `act-${Date.now().toString(36)}`;
 }
 
 /** GET：後台用的完整活動清單（含未上架） */

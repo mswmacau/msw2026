@@ -1223,12 +1223,13 @@ export function AdminConsole({
       {/* 活動編輯彈窗 */}
       {editing && (
         <div className="fixed inset-0 z-[95] overflow-y-auto bg-black/80 p-5">
-          <div className="mx-auto my-8 max-w-2xl rounded-2xl border border-white/10 bg-ink2 p-7">
-            <h3 className="h3">
-              {editing.id ? `編輯活動：${editing.title}` : '新增活動'}
-            </h3>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mx-auto my-8 max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-ink2">
+            {/* 表單本體可捲動，操作列固定在底部，避免要滑很久才找得到儲存鈕 */}
+            <div className="max-h-[calc(100vh-190px)] overflow-y-auto p-7">
+              <h3 className="h3">
+                {editing.id ? `編輯活動：${editing.title}` : '新增活動'}
+              </h3>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="label">活動名稱 *</label>
                 <input
@@ -1377,8 +1378,10 @@ export function AdminConsole({
                 </label>
               </div>
             </div>
+            </div>
 
-            <div className="mt-7 flex flex-wrap gap-3">
+            {/* 操作列固定在卡片底部 */}
+            <div className="sticky bottom-0 flex flex-wrap gap-3 border-t border-white/10 bg-ink2/95 px-7 py-5 backdrop-blur">
               <button
                 disabled={busy === 'activity'}
                 onClick={saveActivity}

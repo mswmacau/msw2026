@@ -81,6 +81,33 @@ async function main() {
   }
   console.log(`  ✓ 跑步紀錄建立完成（月份：${MONTH}）`);
 
+  // ---- 活動：把內建的三個活動寫進資料庫，後台「活動管理」可直接編輯 ----
+  const { FALLBACK_ACTIVITIES } = await import('../src/lib/events');
+  let acts = 0;
+  for (let i = 0; i < FALLBACK_ACTIVITIES.length; i += 1) {
+    const a = FALLBACK_ACTIVITIES[i];
+    const exists = await prisma.activity.findUnique({ where: { slug: a.slug } });
+    if (exists) continue;
+    await prisma.activity.create({
+      data: {
+        slug: a.slug,
+        title: a.title,
+        subtitle: a.subtitle,
+        image: a.image,
+        tag: a.tag,
+        schedule: a.schedule,
+        location: a.location,
+        points: a.points,
+        description: a.description,
+        highlights: JSON.stringify(a.highlights),
+        published: true,
+        sortOrder: i,
+      },
+    });
+    acts += 1;
+  }
+  console.log(`  ✓ 活動建立完成（新增 ${acts} 筆）`);
+
   console.log('\n完成！可用帳號：');
   console.log('  管理員  admin@msw.mo  / msw2026admin');
   console.log('  會員    ming@msw.mo   / msw2026');

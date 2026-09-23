@@ -101,6 +101,24 @@ const created = await j(await req('/api/admin/activities', {
 }));
 log('新增活動', created.ok, `slug=${created.slug}`);
 
+// 6b. 純中文活動名稱（不填網址代稱）→ 內頁不能 404（QA 曾回報 P1）
+const cnSlug = await j(await req('/api/admin/activities', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    title: '週三核心訓練班',
+    schedule: '每週三 19:30',
+    location: '澳門',
+    published: true,
+  }),
+}));
+log('中文名稱活動建立成功', cnSlug.ok, `slug=${cnSlug.slug}`);
+log('自動產生的 slug 為純英數字', /^[a-z0-9-]+$/.test(cnSlug.slug || ''), cnSlug.slug);
+const cnDetail = await req(`/events/${cnSlug.slug}`);
+const cnHtml = await cnDetail.text();
+log('中文名稱活動內頁可開啟（非 404）', cnDetail.status === 200 && cnHtml.includes('週三核心訓練班'), `HTTP ${cnDetail.status}`);
+await req(`/api/admin/activities?id=${cnSlug.id}`, { method: 'DELETE' });
+
 // 7. 前台活動頁應出現新活動
 const events = await (await req('/events')).text();
 log('活動頁顯示新增活動', events.includes('週三核心訓練班'));

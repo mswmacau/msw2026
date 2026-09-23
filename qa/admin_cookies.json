@@ -1,0 +1,47 @@
+[
+ {
+  "name": "__Secure-next-auth.callback-url",
+  "value": "https%3A%2F%2Fa6dd31b4ad670a126.app.workbuddy.host%2Flogin",
+  "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+  "path": "/",
+  "expires": -1,
+  "size": 89,
+  "httpOnly": true,
+  "secure": true,
+  "session": true,
+  "sameSite": "None",
+  "priority": "Medium",
+  "sameParty": false,
+  "sourceScheme": "Secure"
+ },
+ {
+  "name": "__Secure-next-auth.session-token",
+  "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..bmzL20sQwD4Yaj4E.CfrgzhOe6B9ghD-l2HPxFuu6O0lX18034gusPUbCOWovbRZ516f84i8a-N3VA83OrNSklecZqMNXdwqD9uIx0xONqe_AoBqf5FsNHvpMog0bFVE49rsMcV1SjpDsJcNy5OPYCF7Qsz_oGWLLzeTPjxgieudY-xx2sF-w-EDDGo0BVyJ_fojiNvx9nvYZShnKWU5IR4jKycDd5QF7ennrQ5k768Z1DFOAygb9u6Y99WkCAbhgYOP1gEudOiDavcKExwp0anr824ph4oPtgsnCmT7mXjZ3nSDnizdI_evp6gFeoqAdWnUkCYUiJQ.uqySgFPrWx9KsEh5Jl4sCQ",
+  "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+  "path": "/",
+  "expires": 1792741743.454483,
+  "size": 427,
+  "httpOnly": true,
+  "secure": true,
+  "session": false,
+  "sameSite": "None",
+  "priority": "Medium",
+  "sameParty": false,
+  "sourceScheme": "Secure"
+ },
+ {
+  "name": "__Host-next-auth.csrf-token",
+  "value": "cdc88e83a4624b3bec35bb6a591167911ab3ffd95c816f7c6486191fe9b7b4ef%7C9d2e804e8e282b994611e7b32c7b586efb6d31f16d16e3dce11b27c5d1bce7b3",
+  "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+  "path": "/",
+  "expires": -1,
+  "size": 158,
+  "httpOnly": true,
+  "secure": true,
+  "session": true,
+  "sameSite": "None",
+  "priority": "Medium",
+  "sameParty": false,
+  "sourceScheme": "Secure"
+ }
+]

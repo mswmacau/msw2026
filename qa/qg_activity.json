@@ -1,0 +1,19 @@
+{
+  "id": "cmudu2cgu000280uq1nnq6zhs",
+  "slug": "qa-驗證活動",
+  "title": "QA 驗證活動",
+  "subtitle": "每週五 20:00",
+  "image": "/images/street-workout.jpg",
+  "tag": "每週五 20:00",
+  "schedule": "每週五 20:00 - 21:00",
+  "location": "澳門 測試公園",
+  "points": "每次 5 分",
+  "description": "這是自動化測試建立的活動，測試後會刪除。",
+  "highlights": [
+    "重點一：測試用",
+    "重點二：測試用"
+  ],
+  "published": true,
+  "sortOrder": 0,
+  "createdAt": "2026-09-23T08:20:38.430Z"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "__Host-next-auth.csrf-token",
+    "value": "4abb796f1c4dd6ab590aba28ae38c93a13ae276320b71cf03d040cbf3667ddf3%7Ce5b8540b786b1ae75101004026cc9b82777038815db0184a5bcabc5e76850063",
+    "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+    "path": "/",
+    "expires": -1,
+    "size": 158,
+    "httpOnly": true,
+    "secure": true,
+    "session": true,
+    "sameSite": "None",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "__Secure-next-auth.callback-url",
+    "value": "https%3A%2F%2Fa6dd31b4ad670a126.app.workbuddy.host%2Flogin",
+    "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+    "path": "/",
+    "expires": -1,
+    "size": 89,
+    "httpOnly": true,
+    "secure": true,
+    "session": true,
+    "sameSite": "None",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "__Secure-next-auth.session-token",
+    "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..3scESWwu4ce4pmOr.vhtCuTxVShJMQ9uWj1D0BIubWB5fDP0LSN2tae-ePEUnblP7ApfG-Jy3NLJOCl1sViVFswa_rpIDklJIjxOJ-orxj8bnLSDBVkKCymDi6ra7axMl4RKuL8WAqBRpBiZZgC6MNvizGJT4V-rMEdWI0f060a7O4bN0u6R-q9FNEJSYfFR8T6Yvarj63v8cOKkJEKypb5RVA40vyRO0QyMwjH_uAAt-PI6HEsN8miiJfhjRWckzFPubhPl8T_S_eYwwtZg4HJf5DCIp_jY8MNfEiD6IpVGIu5z7z3sD70a_u-P5CA1otg.g2M-DE3tEINoOPhrH_4Gcg",
+    "domain": "a6dd31b4ad670a126.app.workbuddy.host",
+    "path": "/",
+    "expires": 1792745803.663675,
+    "size": 419,
+    "httpOnly": true,
+    "secure": true,
+    "session": false,
+    "sameSite": "None",
+    "priority": "Medium",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  }
+]

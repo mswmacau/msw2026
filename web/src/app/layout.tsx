@@ -7,21 +7,26 @@ import { getSettings, themeCss, DEFAULT_SETTINGS } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: {
-    default: 'MSW 街健館 | Macau Street Workout 澳門街頭健身',
-    template: '%s | MSW 街健館',
-  },
-  description:
-    'MSW 街健館（Macau Street Workout）— 澳門街頭健身社群。定期訓練活動、月度累積跑 300km 挑戰、會員積分與優惠券。',
-  keywords: ['澳門', '街頭健身', 'Street Workout', 'MSW', '跑步', 'Macau'],
-  openGraph: {
-    title: 'MSW 街健館 | Macau Street Workout',
-    description: '澳門街頭健身社群 — 定期訓練、月度累積跑、會員積分',
-    type: 'website',
-    locale: 'zh_TW',
-  },
-};
+/** 網站標題與 SEO 描述跟著後台「網站設定」走 */
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getSettings();
+  const name = s.site_name || 'MSW 街健館';
+  const desc = s.site_description || DEFAULT_SETTINGS.site_description;
+  return {
+    title: {
+      default: `${name} | ${s.site_tagline || 'Macau Street Workout'} 澳門街頭健身`,
+      template: `%s | ${name}`,
+    },
+    description: desc,
+    keywords: ['澳門', '街頭健身', 'Street Workout', 'MSW', '跑步', 'Macau'],
+    openGraph: {
+      title: `${name} | ${s.site_tagline || 'Macau Street Workout'}`,
+      description: desc,
+      type: 'website',
+      locale: 'zh_TW',
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

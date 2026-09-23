@@ -45,8 +45,15 @@ export async function getEvents(): Promise<WpEvent[]> {
 }
 
 export async function getEventBySlug(slug: string): Promise<WpEvent | null> {
-  const data = await wpFetch<WpEvent[]>(`/msw_event?slug=${slug}&_embed=1`);
-  return data?.[0] ?? null;
+  // slug 可能是中文，必須 encode 後再放進 query string
+  const data = await wpFetch<WpEvent[]>(
+    `/msw_event?slug=${encodeURIComponent(slug)}&_embed=1`
+  );
+  if (data?.[0]) return data[0];
+
+  // 少數情況下 WordPress 回傳的 slug 編碼方式不同，退回整批比對
+  const all = await wpFetch<WpEvent[]>('/msw_event?per_page=50&_embed=1');
+  return all?.find((e) => e.slug === slug) ?? null;
 }
 
 /** 取得最新文章（公告 / 教學） */

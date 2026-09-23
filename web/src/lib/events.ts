@@ -1,4 +1,4 @@
-import { getEvents, stripHtml, type WpEvent } from './wp';
+import { getEvents, getEventBySlug, stripHtml, type WpEvent } from './wp';
 import { RULES } from './points';
 import { prisma } from './prisma';
 
@@ -145,12 +145,35 @@ export async function getActivities(): Promise<Activity[]> {
   return FALLBACK_ACTIVITIES;
 }
 
-export async function getActivityBySlug(slug: string): Promise<Activity | undefined> {
+/**
+ * 動態路由傳進來的 slug 有可能是 percent-encoded（非 ASCII 活動代稱會這樣），
+ * 這裡產生所有可能的比對字串，盡量把活動找出來。
+ */
+function slugCandidates(raw: string): string[] {
+  const list = [raw];
   try {
-    const row = await prisma.activity.findUnique({ where: { slug } });
-    if (row) return fromDb(row);
+    const decoded = decodeURIComponent(raw);
+    if (decoded !== raw) list.push(decoded);
   } catch {
-    /* 資料庫查不到就退回內建資料 */
+    /* 不是合法編碼就略過 */
   }
-  return FALLBACK_ACTIVITIES.find((a) => a.slug === slug);
+  return Array.from(new Set(list.filter(Boolean)));
+}
+
+export async function getActivityBySlug(slug: string): Promise<Activity | undefined> {
+  for (const s of slugCandidates(slug)) {
+    try {
+      const row = await prisma.activity.findUnique({ where: { slug: s } });
+      if (row) return fromDb(row);
+    } catch {
+      /* 資料庫查不到就繼續往下找 */
+    }
+    const hit = FALLBACK_ACTIVITIES.find((a) => a.slug === s);
+    if (hit) return hit;
+
+    // WordPress 來的活動（slug 常是中文，查詢時要 encode）
+    const wp = await getEventBySlug(s);
+    if (wp) return fromWp(wp, 0);
+  }
+  return undefined;
 }
