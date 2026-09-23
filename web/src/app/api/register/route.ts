@@ -16,8 +16,15 @@ export async function POST(req: Request) {
     if (password.length < 8) {
       return NextResponse.json({ error: '密碼至少需要 8 個字元' }, { status: 400 });
     }
+    if (password.length > 72) {
+      return NextResponse.json({ error: '密碼不可超過 72 個字元' }, { status: 400 });
+    }
+    // 暱稱長度檢查要在寫入前做：MySQL 欄位超長會直接拋錯變成 500
     if (!displayName) {
       return NextResponse.json({ error: '請填寫暱稱' }, { status: 400 });
+    }
+    if (displayName.length > 30) {
+      return NextResponse.json({ error: '暱稱不可超過 30 個字元' }, { status: 400 });
     }
 
     const exists = await prisma.user.findUnique({ where: { email } });
@@ -45,6 +52,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, email: user.email });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message || '註冊失敗' }, { status: 500 });
+    // 不回傳 e.message，避免外洩資料庫錯誤細節
+    console.error('[register] 失敗：', e);
+    return NextResponse.json({ error: '註冊失敗，請稍後再試' }, { status: 500 });
   }
 }

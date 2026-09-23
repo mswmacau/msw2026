@@ -80,12 +80,10 @@ export async function addPoints(opts: {
  * 若該月累積達標（300km）則額外發放完成獎勵積分。
  */
 export async function approveRunRecord(runId: string, reviewerId: string) {
-  const run = await prisma.runRecord.findUnique({ where: { id: runId } });
-  if (!run) throw new Error('找不到該筆紀錄');
-  if (run.status !== 'PENDING') throw new Error('該筆紀錄已處理過');
-
-  await prisma.runRecord.update({
-    where: { id: runId },
+  // 條件式更新：只有仍是 PENDING 才能被確認。
+  // 若用「先查後改」，並發請求會同時通過檢查導致重複加分。
+  const updated = await prisma.runRecord.updateMany({
+    where: { id: runId, status: 'PENDING' },
     data: {
       status: 'APPROVED',
       reviewedAt: new Date(),
@@ -93,7 +91,12 @@ export async function approveRunRecord(runId: string, reviewerId: string) {
       rejectReason: null,
     },
   });
+  if (updated.count === 0) {
+    const exists = await prisma.runRecord.findUnique({ where: { id: runId } });
+    throw new Error(exists ? '該筆紀錄已處理過' : '找不到該筆紀錄');
+  }
 
+  const run = await prisma.runRecord.findUniqueOrThrow({ where: { id: runId } });
   const km = Number(run.km);
   await addPoints({
     userId: run.userId,
@@ -132,11 +135,9 @@ export async function rejectRunRecord(
   reviewerId: string,
   reason: string
 ) {
-  const run = await prisma.runRecord.findUnique({ where: { id: runId } });
-  if (!run) throw new Error('找不到該筆紀錄');
-  if (run.status !== 'PENDING') throw new Error('該筆紀錄已處理過');
-  return prisma.runRecord.update({
-    where: { id: runId },
+  // 同樣用條件式更新避免並發重複處理
+  const updated = await prisma.runRecord.updateMany({
+    where: { id: runId, status: 'PENDING' },
     data: {
       status: 'REJECTED',
       reviewedAt: new Date(),
@@ -144,6 +145,11 @@ export async function rejectRunRecord(
       rejectReason: reason,
     },
   });
+  if (updated.count === 0) {
+    const exists = await prisma.runRecord.findUnique({ where: { id: runId } });
+    throw new Error(exists ? '該筆紀錄已處理過' : '找不到該筆紀錄');
+  }
+  return prisma.runRecord.findUniqueOrThrow({ where: { id: runId } });
 }
 
 /** 某月份達成名單（後台用來發放優惠券） */
@@ -224,4 +230,47 @@ export function nextMonday20(from = new Date()) {
   d.setDate(d.getDate() + diff);
   d.setHours(20, 0, 0, 0);
   return d;
+}
+
+/**
+ * 轉成 'YYYY-MM-DD'（**本地時區**）。
+ * 注意：不可用 toISOString()，那會轉成 UTC 而讓 UTC+8 的凌晨退回前一天。
+ */
+export function ymdLocal(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+    d.getDate()
+  ).padStart(2, '0')}`;
+}
+
+/**
+ * 解析 'YYYY-MM-DD' 為**本地時區**的 Date。
+ * new Date('2026-09-21') 會被當成 UTC 午夜，在 UTC+8 環境會變成當天 08:00，
+ * 進而影響「取該週週一」的計算，因此必須手動用本地欄位組裝。
+ */
+export function parseLocalDate(s: string) {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d, 0, 0, 0, 0);
+}
+
+/** 取得某一天所屬「那一週的週一」日期（00:00），作為訓練場次的唯一識別 */export function getMondayOfWeek(d = new Date()) {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  const day = date.getDay(); // 0=週日
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+  return date;
+}
+
+/** 今天是否是那一週的週一 */
+export function isTrainingDay(d = new Date()) {
+  return getMondayOfWeek(d).getTime() === new Date(
+    d.getFullYear(), d.getMonth(), d.getDate()
+  ).getTime();
+}
+
+/** 是否在可簽到時段內（週一 19:30 – 21:30） */
+export function canCheckInNow(d = new Date()) {
+  if (!isTrainingDay(d)) return false;
+  const minutes = d.getHours() * 60 + d.getMinutes();
+  return minutes >= 19 * 60 + 30 && minutes <= 21 * 60 + 30;
 }

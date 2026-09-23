@@ -1,5 +1,11 @@
 # MSW 街健館 — 帳號總表
 
+## 🌐 線上網站（任何人可開）
+
+**https://a6dd31b4ad670a126.app.workbuddy.host**
+
+後台：https://a6dd31b4ad670a126.app.workbuddy.host/admin
+
 > ⚠️ 上線前請務必全部更換密碼，並刪除本檔案或移出公開目錄。
 
 ## 一、WordPress 後台（內容管理：活動、文章、頁面）
@@ -36,8 +42,9 @@ Next.js 透過 REST API（`wp-json/wp/v2/msw_event`）讀取，後台改內容�
 | 會員 | `kelvin@msw.mo` | `msw2026` | Kelvin，本月已累積 320 KM（已達標） |
 | 會員 | `joe@msw.mo` | `msw2026` | 阿祖 |
 
-網站網址：http://localhost:3000
-後台入口：http://localhost:3000/admin
+網站網址（本地）：http://localhost:3000
+網站網址（公網）：https://a6dd31b4ad670a126.app.workbuddy.host
+後台入口：網址後面加 `/admin`
 
 ---
 

@@ -1,0 +1,252 @@
+{
+  "pages": [
+    {
+      "p": "/",
+      "ctx": "mem",
+      "status": 200,
+      "title": "MSW 街健館 | Macau Street Workout 澳門街頭健身",
+      "is404": true,
+      "scrollH": 4983,
+      "textLen": 1612,
+      "shot": {
+        "name": "desktop-home.png",
+        "ok": true,
+        "size": 502437
+      }
+    },
+    {
+      "p": "/events",
+      "ctx": "mem",
+      "status": 200,
+      "title": "活動 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1682,
+      "textLen": 850,
+      "shot": {
+        "name": "desktop-events.png",
+        "ok": true,
+        "size": 591640
+      }
+    },
+    {
+      "p": "/run",
+      "ctx": "mem",
+      "status": 200,
+      "title": "月度累積跑 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1942,
+      "textLen": 834,
+      "shot": {
+        "name": "desktop-run.png",
+        "ok": true,
+        "size": 437897
+      }
+    },
+    {
+      "p": "/dashboard",
+      "ctx": "mem",
+      "status": 200,
+      "title": "會員中心 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1826,
+      "textLen": 859,
+      "shot": {
+        "name": "desktop-dashboard.png",
+        "ok": true,
+        "size": 178462
+      }
+    },
+    {
+      "p": "/admin",
+      "ctx": "adm",
+      "status": 200,
+      "title": "管理後台 | MSW 街健館",
+      "is404": true,
+      "scrollH": 1942,
+      "textLen": 974,
+      "shot": {
+        "name": "desktop-admin.png",
+        "ok": true,
+        "size": 415778
+      }
+    },
+    {
+      "p": "/leaderboard",
+      "ctx": "mem",
+      "status": 200,
+      "title": "積分排行榜 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1548,
+      "textLen": 725,
+      "shot": {
+        "name": "desktop-leaderboard.png",
+        "ok": true,
+        "size": 114074
+      }
+    },
+    {
+      "p": "/about",
+      "ctx": "mem",
+      "status": 200,
+      "title": "關於我們 | MSW 街健館",
+      "is404": false,
+      "scrollH": 2591,
+      "textLen": 934,
+      "shot": {
+        "name": "desktop-about.png",
+        "ok": true,
+        "size": 409016
+      }
+    },
+    {
+      "p": "/faq",
+      "ctx": "mem",
+      "status": 200,
+      "title": "常見問題 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1823,
+      "textLen": 556,
+      "shot": {
+        "name": "desktop-faq.png",
+        "ok": true,
+        "size": 78115
+      }
+    },
+    {
+      "p": "/contact",
+      "ctx": "mem",
+      "status": 200,
+      "title": "聯絡我們 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1495,
+      "textLen": 581,
+      "shot": {
+        "name": "desktop-contact.png",
+        "ok": true,
+        "size": 87220
+      }
+    },
+    {
+      "p": "/settings",
+      "ctx": "mem",
+      "status": 200,
+      "title": "帳號設定 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1718,
+      "textLen": 482,
+      "shot": {
+        "name": "desktop-settings.png",
+        "ok": true,
+        "size": 68068
+      }
+    },
+    {
+      "p": "/login",
+      "ctx": "anon",
+      "status": 200,
+      "title": "會員登入 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1304,
+      "textLen": 426,
+      "shot": {
+        "name": "desktop-login.png",
+        "ok": true,
+        "size": 237551
+      }
+    },
+    {
+      "p": "/register",
+      "ctx": "anon",
+      "status": 200,
+      "title": "註冊會員 | MSW 街健館",
+      "is404": false,
+      "scrollH": 1348,
+      "textLen": 446,
+      "shot": {
+        "name": "desktop-register.png",
+        "ok": true,
+        "size": 151173
+      }
+    }
+  ],
+  "shots": [
+    {
+      "name": "desktop-home.png",
+      "ok": true,
+      "size": 502437
+    },
+    {
+      "name": "desktop-events.png",
+      "ok": true,
+      "size": 591640
+    },
+    {
+      "name": "desktop-run.png",
+      "ok": true,
+      "size": 437897
+    },
+    {
+      "name": "desktop-dashboard.png",
+      "ok": true,
+      "size": 178462
+    },
+    {
+      "name": "desktop-admin.png",
+      "ok": true,
+      "size": 415778
+    },
+    {
+      "name": "desktop-leaderboard.png",
+      "ok": true,
+      "size": 114074
+    },
+    {
+      "name": "desktop-about.png",
+      "ok": true,
+      "size": 409016
+    },
+    {
+      "name": "desktop-faq.png",
+      "ok": true,
+      "size": 78115
+    },
+    {
+      "name": "desktop-contact.png",
+      "ok": true,
+      "size": 87220
+    },
+    {
+      "name": "desktop-settings.png",
+      "ok": true,
+      "size": 68068
+    },
+    {
+      "name": "desktop-login.png",
+      "ok": true,
+      "size": 237551
+    },
+    {
+      "name": "desktop-register.png",
+      "ok": true,
+      "size": 151173
+    },
+    {
+      "name": "desktop-home-2.png",
+      "ok": true,
+      "size": 326056
+    },
+    {
+      "name": "desktop-home-3.png",
+      "ok": true,
+      "size": 225723
+    }
+  ],
+  "errors": {
+    "mem": [],
+    "adm": [
+      "[http:404] http://localhost:3000/uploads/1790140336421-3w9u52.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "anon": []
+  }
+}

@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { getMonthlyWinners, currentMonth, RULES } from '@/lib/points';
+import {
+  getMonthlyWinners,
+  currentMonth,
+  RULES,
+  getMondayOfWeek,
+  ymdLocal,
+} from '@/lib/points';
 import { AdminConsole } from './AdminConsole';
 
 export const dynamic = 'force-dynamic';
@@ -33,7 +39,9 @@ export default async function AdminPage() {
   }
 
   const month = currentMonth();
-  const [pending, members, monthAgg, winners, coupons] = await Promise.all([
+  const thisMonday = getMondayOfWeek();
+  const [pending, members, monthAgg, winners, coupons, weekCheckIns, allMembers, memberList] =
+    await Promise.all([
     prisma.runRecord.findMany({
       where: { status: 'PENDING' },
       orderBy: { createdAt: 'asc' },
@@ -46,7 +54,41 @@ export default async function AdminPage() {
       _sum: { km: true },
     }),
     getMonthlyWinners(month),
-    prisma.coupon.count(),
+    prisma.coupon.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { displayName: true, name: true, email: true } } },
+      take: 100,
+    }),
+    // 本週一定期訓練出席名單
+    prisma.trainingCheckIn.findMany({
+      where: { sessionDate: thisMonday },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        user: { select: { id: true, displayName: true, name: true, email: true } },
+      },
+    }),
+    // 會員管理名單
+    prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        name: true,
+        role: true,
+        points: true,
+        totalPoints: true,
+        createdAt: true,
+        _count: { select: { runRecords: true, coupons: true } },
+      },
+    }),
+    // 補簽用的會員下拉名單
+    prisma.user.findMany({
+      where: { role: 'MEMBER' },
+      orderBy: { createdAt: 'asc' },
+      select: { id: true, displayName: true, name: true, email: true },
+    }),
   ]);
 
   return (
@@ -90,7 +132,43 @@ export default async function AdminPage() {
         }))}
         initialWinners={winners}
         goal={RULES.MONTHLY_KM_GOAL}
-        totalCoupons={coupons}
+        totalCoupons={coupons.length}
+        initialCoupons={coupons.map((c) => ({
+          id: c.id,
+          code: c.code,
+          title: c.title,
+          discount: c.discount,
+          status: c.status as 'UNUSED' | 'USED' | 'EXPIRED',
+          periodMonth: c.periodMonth,
+          expiresAt: c.expiresAt.toISOString(),
+          usedAt: c.usedAt ? c.usedAt.toISOString() : null,
+          memberName: c.user.displayName || c.user.name || c.user.email || '匿名',
+        }))}
+        initialCheckIns={weekCheckIns.map((c) => ({
+          id: c.id,
+          userId: c.userId,
+          name: c.user.displayName || c.user.name || c.user.email || '匿名',
+          email: c.user.email ?? '',
+          points: c.points,
+          createdAt: c.createdAt.toISOString(),
+        }))}
+        memberList={memberList.map((u) => ({
+          id: u.id,
+          name: u.displayName || u.name || u.email || '匿名',
+          email: u.email ?? '',
+        }))}
+        initialMembers={allMembers.map((u) => ({
+          id: u.id,
+          name: u.displayName || u.name || u.email || '匿名',
+          email: u.email ?? '',
+          role: u.role as 'MEMBER' | 'ADMIN',
+          points: u.points,
+          totalPoints: u.totalPoints,
+          runs: u._count.runRecords,
+          coupons: u._count.coupons,
+          joinedAt: u.createdAt.toISOString(),
+        }))}
+        weekSessionDate={ymdLocal(thisMonday)}
       />
     </>
   );

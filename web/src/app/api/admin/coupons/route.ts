@@ -9,6 +9,29 @@ export async function GET(req: Request) {
   if (!admin) return NextResponse.json({ error: '沒有權限' }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
+
+  // ?list=1 → 回傳優惠券清單（核銷後用來即時刷新畫面）
+  if (searchParams.get('list') === '1') {
+    const coupons = await prisma.coupon.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { displayName: true, name: true, email: true } } },
+      take: 100,
+    });
+    return NextResponse.json({
+      coupons: coupons.map((c) => ({
+        id: c.id,
+        code: c.code,
+        title: c.title,
+        discount: c.discount,
+        status: c.status,
+        periodMonth: c.periodMonth,
+        expiresAt: c.expiresAt.toISOString(),
+        usedAt: c.usedAt ? c.usedAt.toISOString() : null,
+        memberName: c.user.displayName || c.user.name || c.user.email || '匿名',
+      })),
+    });
+  }
+
   const month = searchParams.get('month') || currentMonth();
   const winners = await getMonthlyWinners(month);
   return NextResponse.json({ month, winners });

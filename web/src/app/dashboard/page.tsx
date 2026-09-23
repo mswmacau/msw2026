@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { getMonthSummary, currentMonth, RULES, nextMonday20 } from '@/lib/points';
+import { getMonthSummary, currentMonth, RULES, nextMonday20, getMondayOfWeek, canCheckInNow, isTrainingDay, ymdLocal } from '@/lib/points';
+import { CheckInButton } from './CheckInButton';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: '會員中心' };
@@ -34,8 +35,9 @@ export default async function DashboardPage() {
   ]);
 
   const nextSession = nextMonday20();
-  const alreadyJoined = checkIns.some(
-    (c) => new Date(c.sessionDate).toDateString() === nextSession.toDateString()
+  const thisWeekSession = getMondayOfWeek();
+  const myCheckIn = checkIns.find(
+    (c) => new Date(c.sessionDate).getTime() === thisWeekSession.getTime()
   );
 
   return (
@@ -120,11 +122,12 @@ export default async function DashboardPage() {
             {/* 定期訓練 */}
             <div className="card">
               <h2 className="h3">定期訓練活動</h2>
+              {/* 本週訓練：可自助簽到 */}
               <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white/[.03] p-5">
                 <div>
-                  <p className="text-xs tracking-wider text-white/45">下場訓練</p>
+                  <p className="text-xs tracking-wider text-white/45">本週場次</p>
                   <p className="mt-1 text-xl font-black">
-                    {nextSession.toLocaleDateString('zh-TW', {
+                    {thisWeekSession.toLocaleDateString('zh-TW', {
                       month: 'long',
                       day: 'numeric',
                       weekday: 'long',
@@ -132,14 +135,36 @@ export default async function DashboardPage() {
                   </p>
                   <p className="text-sm text-energyBright">20:00 – 21:00</p>
                 </div>
-                {alreadyJoined ? (
-                  <span className="chip-approved">已報名</span>
-                ) : (
-                  <span className="chip-pending">現場簽到</span>
-                )}
+                <CheckInButton
+                  sessionDate={ymdLocal(thisWeekSession)}
+                  signedIn={!!myCheckIn}
+                  canCheckIn={canCheckInNow()}
+                  isTrainingDay={isTrainingDay()}
+                  points={RULES.TRAINING_POINTS}
+                />
               </div>
+
+              {/* 下場倒數 */}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[.03] p-5">
+                <div>
+                  <p className="text-xs tracking-wider text-white/45">下場訓練</p>
+                  <p className="mt-1 text-lg font-black">
+                    {nextSession.toLocaleDateString('zh-TW', {
+                      month: 'long',
+                      day: 'numeric',
+                      weekday: 'long',
+                    })}{' '}
+                    <span className="text-energyBright">20:00</span>
+                  </p>
+                </div>
+                <span className="chip bg-cobaltBright/20 text-cobaltBright">
+                  每週固定
+                </span>
+              </div>
+
               <p className="mt-4 text-sm text-white/50">
-                出席簽到可獲得 {RULES.TRAINING_POINTS} 積分。請準時到場，由教練現場點名。
+                出席簽到可獲得 {RULES.TRAINING_POINTS} 積分。請準時到場；
+                活動時段內可於此處自助簽到，或由教練補登。
               </p>
 
               {checkIns.length > 0 && (
@@ -249,6 +274,7 @@ export default async function DashboardPage() {
                   { href: '/events', label: '查看近期活動', icon: '📅' },
                   { href: '/leaderboard', label: '積分排行榜', icon: '🏆' },
                   { href: '/about#rules', label: '積分與任務規則', icon: '📖' },
+                  { href: '/settings', label: '帳號設定（暱稱 / 密碼）', icon: '⚙️' },
                 ].map((l) => (
                   <Link
                     key={l.href}

@@ -1,29 +1,40 @@
-// MSW 街健館 — 會員 / 積分 / 活動數據模型
-// 資料庫：msw_app（與 WordPress 同一個 MySQL 實例，但獨立 schema）
+// MSW 街健館 — 資料庫模型（SQLite 版本）
+//
+// 用途：免安裝外部資料庫，讓整站可以「單一 Node.js 行程 + 一支 .db 檔案」跑起來，
+//       用於雲端沙箱 / 免托管資料庫的平台部署示範。
+//
+// 正式上線請改用 MySQL 版本：prisma/schema.prisma（provider = "mysql"）
+//
+// 差異說明：
+//   - SQLite 不支援 enum，原本的 Role / RunStatus / CouponStatus 改以 String 儲存，
+//     寫入值仍統一由程式碼控制（'MEMBER' | 'ADMIN'、'PENDING' | 'APPROVED' | 'REJECTED'、
+//     'UNUSED' | 'USED' | 'EXPIRED'）。
+//   - SQLite 不支援 @db.Text / @db.VarChar / @db.Char 等原生型別標註，已移除。
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 // ---------- NextAuth 標準表 ----------
 model Account {
-  id                String  @id @default(cuid())
+  id                String @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -54,23 +65,23 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  passwordHash  String? // Email 註冊時使用（Google 登入則為 null）
-  role          Role      @default(MEMBER)
+  passwordHash  String?
+  role          String    @default("MEMBER") // MEMBER | ADMIN
   phone         String?
-  displayName   String? // 街健館暱稱
+  displayName   String?
   avatarUrl     String?
-  bio           String?   @db.Text
+  bio           String?
 
-  points        Int       @default(0) // 目前可用積分
-  totalPoints   Int       @default(0) // 歷史累積積分
+  points      Int @default(0)
+  totalPoints Int @default(0)
 
-  accounts      Account[]
-  sessions      Session[]
-  runRecords    RunRecord[]
-  checkIns      TrainingCheckIn[]
-  coupons       Coupon[]
-  pointLogs     PointLog[]
-  reviewsMade   RunRecord[]           @relation("Reviewer")
+  accounts    Account[]
+  sessions    Session[]
+  runRecords  RunRecord[]
+  checkIns    TrainingCheckIn[]
+  coupons     Coupon[]
+  pointLogs   PointLog[]
+  reviewsMade RunRecord[]          @relation("Reviewer")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,36 +89,25 @@ model User {
   @@index([role])
 }
 
-enum Role {
-  MEMBER
-  ADMIN
-}
-
 // ---------- 跑步紀錄（上傳截圖 + 輸入公里數）----------
 model RunRecord {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  km           Decimal  @db.Decimal(8, 2)
-  screenshotUrl String  @db.Text // 上傳的跑步截圖
-  periodMonth  String   @db.Char(7) // 所屬月份，例如 "2026-09"
-  note         String?  @db.Text
-  status       RunStatus @default(PENDING)
-  rejectReason String?  @db.Text
-  reviewedAt   DateTime?
-  reviewerId   String?
-  reviewer     User?    @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
-  createdAt    DateTime @default(now())
+  id            String  @id @default(cuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  km            Float
+  screenshotUrl String
+  periodMonth   String // 所屬月份，例如 "2026-09"
+  note          String?
+  status        String  @default("PENDING") // PENDING | APPROVED | REJECTED
+  rejectReason  String?
+  reviewedAt    DateTime?
+  reviewerId    String?
+  reviewer      User?   @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
 
   @@index([userId, periodMonth])
   @@index([status])
   @@index([periodMonth])
-}
-
-enum RunStatus {
-  PENDING // 待管理員確認
-  APPROVED // 已確認，計入累積
-  REJECTED // 已駁回
 }
 
 // ---------- 定期訓練活動簽到（每週一 20:00-21:00）----------
@@ -115,7 +115,7 @@ model TrainingCheckIn {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sessionDate DateTime // 該次訓練的日期
+  sessionDate DateTime
   points      Int      @default(10)
   createdAt   DateTime @default(now())
 
@@ -129,8 +129,8 @@ model PointLog {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount    Int // 正數加分，負數扣分
-  reason    String   @db.VarChar(255)
-  refType   String?  @db.VarChar(50) // RUN / TRAINING / MONTHLY_GOAL / COUPON / MANUAL
+  reason    String
+  refType   String? // RUN / TRAINING / MONTHLY_GOAL / COUPON / MANUAL
   refId     String?
   createdAt DateTime @default(now())
 
@@ -139,25 +139,19 @@ model PointLog {
 
 // ---------- 優惠券 ----------
 model Coupon {
-  id         String       @id @default(cuid())
-  code       String       @unique
-  userId     String
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title      String       @db.VarChar(255)
-  description String?     @db.Text
-  discount   String       @db.VarChar(100) // 例如 "8 折" / "MOP 100"
-  periodMonth String      @db.Char(7) // 獎勵歸屬月份
-  status     CouponStatus @default(UNUSED)
-  usedAt     DateTime?
-  expiresAt  DateTime
-  createdAt  DateTime     @default(now())
+  id          String    @id @default(cuid())
+  code        String    @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  discount    String
+  periodMonth String
+  status      String    @default("UNUSED") // UNUSED | USED | EXPIRED
+  usedAt      DateTime?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
 
   @@index([userId])
   @@index([periodMonth])
-}
-
-enum CouponStatus {
-  UNUSED
-  USED
-  EXPIRED
 }

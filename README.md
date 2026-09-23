@@ -1,7 +1,35 @@
 # MSW 街健館 — Macau Street Workout
 
+## 🌐 線上展示網址
+
+**https://a6dd31b4ad670a126.app.workbuddy.host**
+
+任何人皆可開啟，不需登入即可瀏覽；後台入口在 `/admin`。
+
+| 角色 | 帳號 | 密碼 |
+| --- | --- | --- |
+| 管理員 | `admin@msw.mo` | `msw2026admin` |
+| 會員 | `ming@msw.mo` | `msw2026` |
+| 會員 | `kelvin@msw.mo` | `msw2026`（本月已累積 320KM，已達標） |
+
+> 此連結為雲端沙箱部署的展示環境，方便你先點開看、拿去給人看。
+> 若要長期營運，請用第七章的任一方案部署到自己的網域（資料才會永久保存）。
+
+---
+
 從需求到上線的完整專案文件。前端 Next.js 14（App Router），後端 WordPress 6.7 作為內容管理系統，
-會員 / 積分 / 活動數據存放於 MySQL（與 WordPress 同一實例、獨立 database）。
+會員 / 積分 / 活動數據存放於資料庫。
+
+**資料庫採雙軌設計**：
+- `prisma/schema.prisma` — **SQLite**（預設）：一支 `.db` 檔案即可跑，免外部服務，用於雲端沙箱 / 單機部署
+- `prisma/schema.mysql.prisma` — **MySQL**：正式上線用，指令見下方
+
+```bash
+# 切換回 MySQL 正式環境
+npm run db:mysql                  # push schema
+npm run build:mysql               # 以 MySQL schema 產生 client 並建置
+# 並把 .env 的 DATABASE_URL 改回 mysql://...
+```
 
 ---
 
@@ -198,7 +226,7 @@ RunRecord(status = PENDING)          ← 尚未計入任何累積
 
 ## 六、測試報告
 
-端到端自動化驗證（`node e2e.mjs`）結果：**12 項全數通過**
+端到端自動化驗證（`node scripts/e2e-test.mjs`）結果：**12 項全數通過**
 
 ```
 ✅ 會員登入 (ming@msw.mo)

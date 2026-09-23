@@ -1,0 +1,317 @@
+{
+  "steps": [
+    {
+      "k": "register.fields",
+      "v": [
+        {
+          "type": "text",
+          "ph": "例如：阿明"
+        },
+        {
+          "type": "email",
+          "ph": "you@example.com"
+        },
+        {
+          "type": "password",
+          "ph": "••••••••"
+        },
+        {
+          "type": "password",
+          "ph": "••••••••"
+        }
+      ]
+    },
+    {
+      "k": "register.filled",
+      "v": [
+        "text:QA阿明48259",
+        "email:qa+1790140548259@msw.mo",
+        "password:qaPass2026",
+        "password:qaPass2026"
+      ]
+    },
+    {
+      "k": "register.urlAfter",
+      "v": "http://localhost:3000/dashboard"
+    },
+    {
+      "k": "register.autoLogin",
+      "v": true
+    },
+    {
+      "k": "register.navbarPoints",
+      "v": "50積分"
+    },
+    {
+      "k": "dashboard.afterRegister",
+      "v": {
+        "points": 50,
+        "km": 0,
+        "goal": 300
+      }
+    },
+    {
+      "k": "dashboard.has50",
+      "v": true
+    },
+    {
+      "k": "dashboard.hasName",
+      "v": true
+    },
+    {
+      "k": "run.before",
+      "v": {
+        "km": 0,
+        "goal": 300,
+        "nums": {
+          "待確認": 0,
+          "已確認": 0,
+          "已駁回": 0
+        },
+        "rows": [
+          "MONTHLY RUN CHALLENGE月度累積跑隨時隨地跑，上傳跑步 App 截圖並填寫公里數，經管理員確認後計入累積。 單月達到 300 公里即完成任務，月底由後台統一發放優惠券。2026-09 累積進度（已確認）0.0/ 300 K",
+          "2026-09 累積進度（已確認）0.0/ 300 KM狀態還差 300.0 KM0待確認0已確認0已駁回",
+          "2026-09 累積進度（已確認）0.0/ 300 KM狀態還差 300.0 KM",
+          "2026-09 累積進度（已確認）0.0/ 300 KM"
+        ]
+      }
+    },
+    {
+      "k": "run.fileInputExists",
+      "v": true
+    },
+    {
+      "k": "run.uploadReady",
+      "v": true
+    },
+    {
+      "k": "run.kmValue",
+      "v": "8.8"
+    },
+    {
+      "k": "run.successToast",
+      "v": true
+    },
+    {
+      "k": "run.listHasPending",
+      "v": true
+    },
+    {
+      "k": "run.afterSubmit",
+      "v": {
+        "km": 0,
+        "goal": 300,
+        "nums": {
+          "待確認": 1,
+          "已確認": 0,
+          "已駁回": 0
+        },
+        "rows": [
+          "MONTHLY RUN CHALLENGE月度累積跑隨時隨地跑，上傳跑步 App 截圖並填寫公里數，經管理員確認後計入累積。 單月達到 300 公里即完成任務，月底由後台統一發放優惠券。2026-09 累積進度（已確認）0.0/ 300 K",
+          "2026-09 累積進度（已確認）0.0/ 300 KM狀態還差 300.0 KM1待確認0已確認0已駁回",
+          "2026-09 累積進度（已確認）0.0/ 300 KM狀態還差 300.0 KM",
+          "2026-09 累積進度（已確認）0.0/ 300 KM",
+          "上傳跑步紀錄截圖需清楚顯示距離與日期，管理員確認後才會計入累積。跑步截圖 *📷點擊選擇圖片JPG / PNG / WebP，8MB 以內公里數 *KM備註（選填）計入月份已送出，等待管理員確認 👍送出紀錄我的上傳紀錄8.80 KM202",
+          "上傳跑步紀錄截圖需清楚顯示距離與日期，管理員確認後才會計入累積。跑步截圖 *📷點擊選擇圖片JPG / PNG / WebP，8MB 以內公里數 *KM備註（選填）計入月份已送出，等待管理員確認 👍送出紀錄我的上傳紀錄8.80 KM202",
+          "我的上傳紀錄8.80 KM2026-092026/9/23 下午1:16:00 · QA 回歸測試上傳待確認",
+          "8.80 KM2026-092026/9/23 下午1:16:00 · QA 回歸測試上傳待確認"
+        ]
+      }
+    },
+    {
+      "k": "run.record8_8",
+      "v": []
+    },
+    {
+      "k": "admin.login",
+      "v": {
+        "clicked": true,
+        "url": "http://localhost:3000/dashboard"
+      }
+    },
+    {
+      "k": "admin.tabs",
+      "v": [
+        "待確認截圖 (7)",
+        "訓練出席 (0)",
+        "達成名單 (1)",
+        "優惠券 (1)",
+        "會員 (7)"
+      ]
+    },
+    {
+      "k": "admin.pendingTabLabel",
+      "v": "待確認截圖 (7)"
+    },
+    {
+      "k": "admin.pendingCard",
+      "v": {
+        "found": 1,
+        "hasImg": true,
+        "imgSrc": "/uploads/1790140557689-7sgtra.jpg",
+        "imgCursor": "zoom-in",
+        "cardKm": "8.80",
+        "hasApproveBtn": true
+      }
+    },
+    {
+      "k": "admin.lightbox",
+      "v": {
+        "clicked": true,
+        "open": true,
+        "cls": "fixed inset-0 z-[100] grid cursor-zoom-out place-items-cente"
+      }
+    },
+    {
+      "k": "admin.approveClicked",
+      "v": {
+        "ok": true,
+        "btnText": "✓ 確認"
+      }
+    },
+    {
+      "k": "admin.approveApiCalls",
+      "v": [
+        {
+          "status": 200,
+          "url": "http://localhost:3000/api/admin/runs/cmudngwg9000eate4zgmp64xo",
+          "body": "{\"ok\":true,\"message\":\"已確認 8.8 km，該月累積 8.8 km\"}"
+        }
+      ]
+    },
+    {
+      "k": "admin.afterApprove",
+      "v": {
+        "tabLabel": "待確認截圖 (6)",
+        "emailStillOnPage": false
+      }
+    },
+    {
+      "k": "run.afterApprove",
+      "v": {
+        "km": 8.8,
+        "goal": 300,
+        "nums": {
+          "待確認": 0,
+          "已確認": 1,
+          "已駁回": 0
+        },
+        "rows": [
+          "MONTHLY RUN CHALLENGE月度累積跑隨時隨地跑，上傳跑步 App 截圖並填寫公里數，經管理員確認後計入累積。 單月達到 300 公里即完成任務，月底由後台統一發放優惠券。2026-09 累積進度（已確認）8.8/ 300 K",
+          "2026-09 累積進度（已確認）8.8/ 300 KM狀態還差 291.2 KM0待確認1已確認0已駁回",
+          "2026-09 累積進度（已確認）8.8/ 300 KM狀態還差 291.2 KM",
+          "2026-09 累積進度（已確認）8.8/ 300 KM",
+          "上傳跑步紀錄截圖需清楚顯示距離與日期，管理員確認後才會計入累積。跑步截圖 *📷點擊選擇圖片JPG / PNG / WebP，8MB 以內公里數 *KM備註（選填）計入月份送出紀錄我的上傳紀錄8.80 KM2026-092026/9/23 ",
+          "上傳跑步紀錄截圖需清楚顯示距離與日期，管理員確認後才會計入累積。跑步截圖 *📷點擊選擇圖片JPG / PNG / WebP，8MB 以內公里數 *KM備註（選填）計入月份送出紀錄我的上傳紀錄8.80 KM2026-092026/9/23 ",
+          "我的上傳紀錄8.80 KM2026-092026/9/23 下午1:16:00 · QA 回歸測試上傳已確認",
+          "8.80 KM2026-092026/9/23 下午1:16:00 · QA 回歸測試上傳已確認"
+        ]
+      }
+    },
+    {
+      "k": "run.confirmedSection",
+      "v": "已確認） 8.8/ 300 KM 狀態 還差 291.2 KM 0 待確認 1 已確認 0 已駁回 上傳跑步紀錄 截圖需清楚顯示距離與日期，管理員確認後才會計入累積。 跑步截圖 * 📷 點擊選擇圖片 JPG / PNG / WebP，8MB 以內 公里數 * KM 備註（選填） 計入月份 送出紀錄 我的上傳紀錄 8.80 KM2026-09 2026/9/23 下午1:16:00 · QA 回歸測試上傳 已確認 M MSW 街健館 MACAU STREET WORKOUT MSW 街健館是澳門街頭健身社群，我們相信訓練不該被場地和時間綁住。 每週一晚上八點，一起練；每個月三百公里，一起跑。 "
+    },
+    {
+      "k": "dashboard.afterApprove",
+      "v": {
+        "points": 59,
+        "km": 8.8,
+        "goal": 300
+      }
+    }
+  ],
+  "shots": [
+    {
+      "name": "reg-1-register.png",
+      "ok": true,
+      "size": 154246
+    },
+    {
+      "name": "reg-2-dashboard.png",
+      "ok": true,
+      "size": 176305
+    },
+    {
+      "name": "reg-3-upload.png",
+      "ok": true,
+      "size": 91965
+    },
+    {
+      "name": "reg-3b-lightbox.png",
+      "ok": true,
+      "size": 204363
+    },
+    {
+      "name": "reg-4-admin-approved.png",
+      "ok": true,
+      "size": 415778
+    },
+    {
+      "name": "reg-5-member-confirmed.png",
+      "ok": true,
+      "size": 175981
+    }
+  ],
+  "errors": {
+    "member": [
+      "[reqfail] http://localhost:3000/?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/events?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/run?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/leaderboard?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/events/weekly-training?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/dashboard?_rsc=1dllr net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/dashboard?_rsc=1jqx0 net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/settings?_rsc=1538b net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/?_rsc=e9m2j net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/events?_rsc=e9m2j net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/leaderboard?_rsc=e9m2j net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/dashboard?_rsc=e9m2j net::ERR_ABORTED",
+      "[http:404] http://localhost:3000/uploads/1790140557689-7sgtra.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[reqfail] http://localhost:3000/events/weekly-training?_rsc=e9m2j net::ERR_ABORTED"
+    ],
+    "admin": [
+      "[reqfail] http://localhost:3000/leaderboard?_rsc=16djb net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/events/weekly-training?_rsc=16djb net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/dashboard?_rsc=16djb net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/dashboard?_rsc=1jqx0 net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/admin?_rsc=1538b net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/settings?_rsc=1538b net::ERR_ABORTED",
+      "[http:404] http://localhost:3000/uploads/1790140336421-3w9u52.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[http:404] http://localhost:3000/uploads/1790140557689-7sgtra.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[reqfail] http://localhost:3000/run?_rsc=1pazn net::ERR_ABORTED",
+      "[reqfail] http://localhost:3000/leaderboard?_rsc=1pazn net::ERR_ABORTED",
+      "[http:404] http://localhost:3000/uploads/1790140557689-7sgtra.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[reqfail] http://localhost:3000/admin?_rsc=1swzv net::ERR_ABORTED"
+    ]
+  },
+  "summary": {
+    "email": "qa+1790140548259@msw.mo",
+    "name": "QA阿明48259",
+    "km": 8.8,
+    "pointsAfterRegister": 50,
+    "pointsAfterApprove": 59,
+    "kmBefore": 0,
+    "kmAfterSubmit": 0,
+    "kmAfterApprove": 8.8,
+    "pendingBefore": {
+      "待確認": 0,
+      "已確認": 0,
+      "已駁回": 0
+    },
+    "pendingAfter": {
+      "待確認": 1,
+      "已確認": 0,
+      "已駁回": 0
+    },
+    "final": {
+      "待確認": 0,
+      "已確認": 1,
+      "已駁回": 0
+    }
+  }
+}

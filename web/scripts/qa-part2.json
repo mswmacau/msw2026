@@ -1,0 +1,153 @@
+{
+  "steps": [
+    {
+      "k": "login",
+      "v": {
+        "clicked": true,
+        "url": "http://localhost:3000/dashboard"
+      }
+    },
+    {
+      "k": "tab.待確認截圖",
+      "v": {
+        "clicked": true,
+        "matched": true,
+        "activeBtn": {
+          "text": "待確認截圖 (6)",
+          "cls": "flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition bg-cobaltBr"
+        }
+      }
+    },
+    {
+      "k": "tab.訓練出席",
+      "v": {
+        "clicked": true,
+        "matched": true,
+        "activeBtn": {
+          "text": "訓練出席 (0)",
+          "cls": "flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition bg-cobaltBr"
+        }
+      }
+    },
+    {
+      "k": "tab.達成名單",
+      "v": {
+        "clicked": true,
+        "matched": true,
+        "activeBtn": {
+          "text": "達成名單 (1)",
+          "cls": "flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition bg-cobaltBr"
+        }
+      }
+    },
+    {
+      "k": "tab.優惠券",
+      "v": {
+        "clicked": true,
+        "matched": true,
+        "activeBtn": {
+          "text": "優惠券 (1)",
+          "cls": "flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition bg-cobaltBr"
+        }
+      }
+    },
+    {
+      "k": "tab.會員",
+      "v": {
+        "clicked": true,
+        "matched": true,
+        "activeBtn": {
+          "text": "會員 (7)",
+          "cls": "flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition bg-cobaltBr"
+        }
+      }
+    },
+    {
+      "k": "tab.會員.rows",
+      "v": {
+        "rows": 7,
+        "head": ""
+      }
+    },
+    {
+      "k": "coupon.before",
+      "v": {
+        "snippet": " 待確認截圖 (6) 訓練出席 (0) 達成名單 (1) 優惠券 (1) 會員 (7) 優惠券核銷 輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。 🎟️ 核銷 券號 會員 內容 月份 狀態 有效期 MSW-202609-DEMO01 阿明 2026-09 月度 300KM 達成優惠券 全館 8 折 2026-09 未使用 2026/12/23 M MSW 街健館 MACAU STREET WORKOUT MSW 街健館是澳門街頭健身社群，我們相信訓練不該被場地和時間綁住。 每週一晚上八點，一起練；每個"
+      }
+    },
+    {
+      "k": "coupon.inputValue",
+      "v": "MSW-202609-DEMO01"
+    },
+    {
+      "k": "coupon.apiCalls",
+      "v": [
+        {
+          "status": 200,
+          "body": "{\"ok\":true,\"message\":\"核銷成功：全館 8 折\",\"coupon\":{\"code\":\"MSW-202609-DEMO01\",\"title\":\"2026-09 月度 300KM 達成優惠券\",\"discount\":\"全館 8 折\",\"periodMonth\":\"2026-09\",\"memberName\":\"阿明\"}}"
+        },
+        {
+          "status": 409,
+          "body": "{\"error\":\"此券已於 2026/9/23 下午1:22:47 核銷過\",\"usedAt\":\"2026-09-23T05:22:47.377Z\"}"
+        },
+        {
+          "status": 404,
+          "body": "{\"error\":\"找不到這個優惠券號\"}"
+        }
+      ]
+    },
+    {
+      "k": "coupon.after",
+      "v": {
+        "snippet": "26-09 已確認里程 1 本月達標人數 待確認截圖 (6) 訓練出席 (0) 達成名單 (1) 優惠券 (1) 會員 (7) 優惠券核銷 輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。 🎟️ 核銷 ✓ 核銷成功：全館 8 折 會員：阿明 · 券號：MSW-202609-DEMO01 2026-09 月度 300KM 達成優惠券 券號 會員 內容 月份 狀態 有效期 MSW-202609-DEMO01 阿明 2026-09 月度 300KM 達成優惠券 全館 8 折 2026-09 已核銷 2026/12/23 核銷於 2026/9/23 M MSW 街健館 MACAU STREET WORKOUT MSW 街健館是澳門街頭健",
+        "hasRedeemedChip": true,
+        "msgs": [
+          "優惠券核銷輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。🎟️ 核銷✓ 核銷成功：全館 8 折會員：阿明 · 券號：MSW-202609-DEMO012026-09 月度 300KM 達成優惠券",
+          "輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。",
+          "🎟️ 核銷",
+          "✓ 核銷成功：全館 8 折會員：阿明 · 券號：MSW-202609-DEMO012026-09 月度 300KM 達成優惠券",
+          "✓ 核銷成功：全館 8 折會員：阿明 · 券號：MSW-202609-DEMO012026-09 月度 300KM 達成優惠券",
+          "✓ 核銷成功：全館 8 折"
+        ]
+      }
+    },
+    {
+      "k": "coupon.duplicate",
+      "v": {
+        "err": true,
+        "msgs": [
+          "券號會員內容月份狀態有效期MSW-202609-DEMO01阿明2026-09 月度 300KM 達成優惠券全館 8 折2026-09已核銷2026/12/23核銷於 2026/9/23"
+        ]
+      }
+    },
+    {
+      "k": "coupon.notFound",
+      "v": [
+        "優惠券核銷輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。🎟️ 核銷✕ 找不到這個優惠券號券號會員內容月份狀態有效期MSW-202609-DEMO01阿明2026-09 月度 300KM 達成優惠券全館 8 折2026-09已核銷2026/12/23核銷於 2026/9/23",
+        "優惠券核銷輸入會員出示的券號即可核銷。核銷後不可重複使用，會員同時獲得 20 點回饋積分。🎟️ 核銷✕ 找不到這個優惠券號",
+        "✕ 找不到這個優惠券號",
+        "✕ 找不到這個優惠券號"
+      ]
+    }
+  ],
+  "shots": [
+    {
+      "name": "reg-6-admin-tabs.png",
+      "ok": true,
+      "size": 101805
+    },
+    {
+      "name": "reg-7-redeem.png",
+      "ok": true,
+      "size": 151378
+    }
+  ],
+  "errors": [
+    "[http:404] http://localhost:3000/uploads/1790140336421-3w9u52.jpg",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[http:409] http://localhost:3000/api/admin/coupons/redeem",
+    "[console] Failed to load resource: the server responded with a status of 409 (Conflict)",
+    "[http:404] http://localhost:3000/api/admin/coupons/redeem",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

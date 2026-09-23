@@ -6,7 +6,8 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
-const MONTH = new Date().toISOString().slice(0, 7); // 例如 2026-09
+const now = new Date();
+const MONTH = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // 例如 2026-09
 
 async function main() {
   console.log('→ 建立管理員…');

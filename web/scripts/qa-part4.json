@@ -1,0 +1,316 @@
+{
+  "pages": [
+    {
+      "p": "/",
+      "ctx": "mem",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": [
+          "div.pointer-events-none absolute -right-20 b right=470",
+          "div.flex w-max animate-marquee gap-12 right=2233",
+          "span.whitespace-nowrap text-lg font-bold text right=447",
+          "span.whitespace-nowrap text-lg font-bold text right=621",
+          "span.whitespace-nowrap text-lg font-bold text right=777",
+          "span.whitespace-nowrap text-lg font-bold text right=897",
+          "span.whitespace-nowrap text-lg font-bold text right=1049",
+          "span.whitespace-nowrap text-lg font-bold text right=1205"
+        ]
+      },
+      "clipped": [],
+      "smallTargets": [
+        "a \"查看全部活動 →\" 102x20",
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-home.png",
+        "ok": true,
+        "size": 616068
+      }
+    },
+    {
+      "p": "/events",
+      "ctx": "mem",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": []
+      },
+      "clipped": [],
+      "smallTargets": [
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16",
+        "a \"我的優惠券\" 70x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-events.png",
+        "ok": true,
+        "size": 559566
+      }
+    },
+    {
+      "p": "/run",
+      "ctx": "mem",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": []
+      },
+      "clipped": [
+        "p \"2026/9/23 下午1:01:59 · 平日\" 160<179",
+        "p \"2026/9/23 下午1:01:59 · 週末\" 160<179",
+        "p \"2026/9/23 下午1:01:59 · 平日\" 160<179",
+        "p \"2026/9/23 下午1:01:59 · 平日\" 160<179"
+      ],
+      "smallTargets": [
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16",
+        "a \"我的優惠券\" 70x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-run.png",
+        "ok": true,
+        "size": 390012
+      }
+    },
+    {
+      "p": "/dashboard",
+      "ctx": "mem",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": [
+          "div.pointer-events-none absolute -right-16 - right=433"
+        ]
+      },
+      "clipped": [],
+      "smallTargets": [
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16",
+        "a \"我的優惠券\" 70x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-dashboard.png",
+        "ok": true,
+        "size": 235754
+      }
+    },
+    {
+      "p": "/admin",
+      "ctx": "adm",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": []
+      },
+      "clipped": [],
+      "smallTargets": [
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16",
+        "a \"我的優惠券\" 70x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-admin.png",
+        "ok": true,
+        "size": 162413
+      }
+    },
+    {
+      "p": "/login",
+      "ctx": "anon",
+      "status": 200,
+      "overflow": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bodyScrollWidth": 390,
+        "overflow": false,
+        "offenders": []
+      },
+      "clipped": [],
+      "smallTargets": [
+        "a \"立即註冊\" 56x16",
+        "a \"全部活動\" 56x16",
+        "a \"定期訓練（週一 20:00）\" 137x16",
+        "a \"月度累積跑 300km\" 116x16",
+        "a \"積分排行榜\" 70x16",
+        "a \"會員登入\" 56x16",
+        "a \"註冊帳號\" 56x16",
+        "a \"會員中心\" 56x16"
+      ],
+      "table": null,
+      "shot": {
+        "name": "mobile-login.png",
+        "ok": true,
+        "size": 159727
+      }
+    }
+  ],
+  "shots": [
+    {
+      "name": "mobile-home.png",
+      "ok": true,
+      "size": 616068
+    },
+    {
+      "name": "mobile-events.png",
+      "ok": true,
+      "size": 559566
+    },
+    {
+      "name": "mobile-run.png",
+      "ok": true,
+      "size": 390012
+    },
+    {
+      "name": "mobile-dashboard.png",
+      "ok": true,
+      "size": 235754
+    },
+    {
+      "name": "mobile-admin.png",
+      "ok": true,
+      "size": 162413
+    },
+    {
+      "name": "mobile-login.png",
+      "ok": true,
+      "size": 159727
+    },
+    {
+      "name": "mobile-menu-open.png",
+      "ok": true,
+      "size": 349794
+    },
+    {
+      "name": "mobile-admin-members.png",
+      "ok": true,
+      "size": 112384
+    }
+  ],
+  "menu": {
+    "opened": true,
+    "linkCount": 8,
+    "links": [
+      {
+        "t": "首頁",
+        "href": "/",
+        "h": 48
+      },
+      {
+        "t": "活動",
+        "href": "/events",
+        "h": 48
+      },
+      {
+        "t": "月度累積跑",
+        "href": "/run",
+        "h": 48
+      },
+      {
+        "t": "排行榜",
+        "href": "/leaderboard",
+        "h": 48
+      },
+      {
+        "t": "關於我們",
+        "href": "/about",
+        "h": 48
+      },
+      {
+        "t": "會員中心",
+        "href": "/dashboard",
+        "h": 46
+      },
+      {
+        "t": "立即加入會員",
+        "href": "/register",
+        "h": 53
+      },
+      {
+        "t": "查看近期活動",
+        "href": "/events",
+        "h": 53
+      }
+    ]
+  },
+  "misc": {
+    "burger": {
+      "exists": true,
+      "visible": true,
+      "size": "40x40"
+    },
+    "menuNavTarget": "/events",
+    "urlAfterMenuClick": "http://localhost:3000/events",
+    "adminMobile": {
+      "overflow": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "table": {
+        "tableSW": 880,
+        "viewport": 390,
+        "wrapper": {
+          "tag": "DIV",
+          "canScroll": true,
+          "sw": 880,
+          "cw": 348
+        }
+      }
+    }
+  },
+  "errors": {
+    "mem": [],
+    "adm": [
+      "[http:404] http://localhost:3000/uploads/1790140336421-3w9u52.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[http:404] http://localhost:3000/uploads/1790140336421-3w9u52.jpg",
+      "[console] Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "anon": []
+  }
+}

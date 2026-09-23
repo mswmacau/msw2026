@@ -22,15 +22,21 @@ export async function POST(req: Request) {
     }
 
     const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
-    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const dir = path.join(process.cwd(), 'public', 'uploads');
+    // 檔名帶上傳者標記：讓剛上傳、尚未建立紀錄的圖也能被本人預覽
+    const name = `${user.id.slice(-8)}-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${ext}`;
+    // 不可存進 public/：Next.js 啟動時已快照 public 檔案清單，
+    // 執行時期寫入的檔案在正式環境一律 404（後台審核會看不到圖）。
+    const dir = path.join(process.cwd(), 'data', 'uploads');
     await mkdir(dir, { recursive: true });
 
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(path.join(dir, name), buffer);
 
-    return NextResponse.json({ url: `/uploads/${name}` });
+    return NextResponse.json({ url: `/api/media/${name}` });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message || '上傳失敗' }, { status: 500 });
+    console.error('[upload] 失敗：', e);
+    return NextResponse.json({ error: '上傳失敗，請稍後再試' }, { status: 500 });
   }
 }

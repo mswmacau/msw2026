@@ -143,15 +143,17 @@ export function RunUploader({ month }: { month: string }) {
       </div>
 
       {msg && (
-        <p
-          className={`mt-6 rounded-lg px-4 py-3 text-sm ring-1 ${
-            msg.type === 'ok'
-              ? 'bg-emerald-500/15 text-emerald-400 ring-emerald-500/30'
-              : 'bg-energy/15 text-energyBright ring-energy/30'
-          }`}
-        >
-          {msg.text}
-        </p>
+        <div className="pointer-events-none fixed inset-x-0 top-24 z-[90] flex justify-center px-5">
+          <p
+            className={`pointer-events-auto rounded-xl px-6 py-3.5 text-sm font-semibold shadow-2xl ring-1 backdrop-blur ${
+              msg.type === 'ok'
+                ? 'bg-emerald-500/20 text-emerald-300 ring-emerald-500/40'
+                : 'bg-energy/20 text-energyBright ring-energy/40'
+            }`}
+          >
+            {msg.text}
+          </p>
+        </div>
       )}
 
       <button type="submit" disabled={saving || uploading} className="btn-primary mt-7 w-full">
