@@ -29,3 +29,8 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# ---- QA 驗證產物（截圖與報告，只留在磁碟供查閱，不進版本庫）----
+qa-screenshots/
+web/scripts/shots/
+qa/
