@@ -10,10 +10,13 @@ const nextConfig = {
     ],
   },
   async rewrites() {
+    // 沒有設定 WordPress 網址時（例如部署到 Vercel），就不要加 rewrite，否則 build 會失敗
+    const wp = process.env.NEXT_PUBLIC_WP_URL || process.env.WP_URL;
+    if (!wp || !/^https?:\/\//.test(wp)) return [];
     return [
       {
         source: '/wp-api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_WP_URL}/wp-json/:path*`,
+        destination: `${wp.replace(/\/$/, '')}/wp-json/:path*`,
       },
     ];
   },
