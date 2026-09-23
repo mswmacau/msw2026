@@ -155,3 +155,31 @@ model Coupon {
   @@index([userId])
   @@index([periodMonth])
 }
+
+// ---------- 網站設定（後台可自行修改：Logo / 文案 / 聯絡資訊）----------
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- 活動（後台可自行新增 / 編輯 / 下架）----------
+model Activity {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  subtitle    String
+  image       String
+  tag         String  @default("活動")
+  schedule    String
+  location    String
+  points      String
+  description String
+  // SQLite 不支援陣列，以 JSON 字串存放（例如 ["重點一","重點二"]）
+  highlights  String  @default("[]")
+  published   Boolean @default(true)
+  sortOrder   Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([published, sortOrder])
+}

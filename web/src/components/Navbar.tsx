@@ -13,7 +13,7 @@ const NAV = [
   { href: '/about', label: '關於我們' },
 ];
 
-export function Navbar() {
+export function Navbar({ settings }: { settings?: Record<string, string> }) {
   const { data: session, status } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -31,6 +31,10 @@ export function Navbar() {
   const role = (session?.user as any)?.role;
   const points = (session?.user as any)?.points ?? 0;
 
+  const siteName = settings?.site_name || 'MSW 街健館';
+  const siteTagline = settings?.site_tagline || 'MACAU STREET WORKOUT';
+  const siteLogo = settings?.site_logo || '';
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
@@ -42,16 +46,25 @@ export function Navbar() {
       <nav className="container-msw flex h-[72px] items-center justify-between gap-6">
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-3">
-          <span className="relative grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cobaltBright to-cobalt font-black text-white shadow-lg shadow-cobalt/40">
-            M
-            <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-energy ring-2 ring-ink" />
-          </span>
+          {siteLogo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={siteLogo}
+              alt={siteName}
+              className="h-10 w-10 rounded-xl object-contain"
+            />
+          ) : (
+            <span className="relative grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cobaltBright to-cobalt font-black text-white shadow-lg shadow-cobalt/40">
+              {siteName.replace(/\s/g, '').charAt(0) || 'M'}
+              <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-energy ring-2 ring-ink" />
+            </span>
+          )}
           <span className="leading-none">
             <span className="block text-[17px] font-black tracking-tight">
-              MSW 街健館
+              {siteName}
             </span>
             <span className="block text-[10px] font-medium tracking-[.18em] text-white/50">
-              MACAU STREET WORKOUT
+              {siteTagline}
             </span>
           </span>
         </Link>

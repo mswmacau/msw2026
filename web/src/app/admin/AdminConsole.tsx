@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { SETTING_FIELDS } from '@/lib/site-fields';
 
 type PendingRun = {
   id: string;
@@ -57,6 +58,37 @@ type MemberRow = {
 
 type MemberLite = { id: string; name: string; email: string };
 
+type ActivityRow = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  tag: string;
+  schedule: string;
+  location: string;
+  points: string;
+  description: string;
+  highlights: string; // JSON 字串
+  published: boolean;
+  sortOrder: number;
+};
+
+const EMPTY_ACTIVITY = {
+  slug: '',
+  title: '',
+  subtitle: '',
+  image: '/images/street-workout.jpg',
+  tag: '活動',
+  schedule: '',
+  location: '澳門',
+  points: '—',
+  description: '',
+  highlights: '',
+  published: true,
+  sortOrder: 0,
+};
+
 export function AdminConsole({
   month,
   initialPending,
@@ -68,6 +100,8 @@ export function AdminConsole({
   memberList,
   initialMembers,
   weekSessionDate,
+  initialSettings,
+  initialActivities,
 }: {
   month: string;
   initialPending: PendingRun[];
@@ -79,6 +113,8 @@ export function AdminConsole({
   memberList: MemberLite[];
   initialMembers: MemberRow[];
   weekSessionDate: string;
+  initialSettings: Record<string, string>;
+  initialActivities: ActivityRow[];
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(initialPending);
@@ -91,8 +127,19 @@ export function AdminConsole({
   const [members, setMembers] = useState(initialMembers);
   const [memberQuery, setMemberQuery] = useState('');
   const [tab, setTab] = useState<
-    'review' | 'winners' | 'training' | 'coupons' | 'members'
+    'review' | 'winners' | 'training' | 'coupons' | 'members' | 'settings' | 'activities'
   >('review');
+
+  // ---- 網站設定 ----
+  const [settings, setSettings] = useState(initialSettings);
+  const [settingGroup, setSettingGroup] = useState(SETTING_FIELDS[0].group);
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+
+  // ---- 活動管理 ----
+  const [activities, setActivities] = useState(initialActivities);
+  const [editing, setEditing] = useState<(typeof EMPTY_ACTIVITY & { id?: string }) | null>(
+    null
+  );
   const [checkIns, setCheckIns] = useState(initialCheckIns);
   const [checkInDate, setCheckInDate] = useState(weekSessionDate);
   const [manualUser, setManualUser] = useState('');
@@ -275,12 +322,134 @@ export function AdminConsole({
     startTransition(() => router.refresh());
   }
 
+  /* ================= 網站設定 ================= */
+
+  async function saveSettings(keys?: string[]) {
+    const payload: Record<string, string> = {};
+    for (const f of SETTING_FIELDS) {
+      if (keys && !keys.includes(f.key)) continue;
+      payload[f.key] = settings[f.key] ?? '';
+    }
+    setBusy('settings');
+    const res = await fetch('/api/admin/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    setBusy(null);
+    const data = await res.json();
+    if (!res.ok) return flash('err', data.error || '儲存失敗');
+    flash('ok', '設定已儲存，前台已更新');
+    startTransition(() => router.refresh());
+  }
+
+  async function uploadImage(key: string, file: File) {
+    setUploadingKey(key);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        flash('err', data.error || '上傳失敗');
+        return;
+      }
+      setSettings((s) => ({ ...s, [key]: data.url }));
+      flash('ok', '圖片已上傳，記得按「儲存設定」');
+    } catch {
+      flash('err', '上傳失敗，請稍後再試');
+    } finally {
+      setUploadingKey(null);
+    }
+  }
+
+  /* ================= 活動管理 ================= */
+
+  async function loadActivities() {
+    const res = await fetch('/api/admin/activities');
+    if (!res.ok) return flash('err', '讀取活動失敗');
+    const data = await res.json();
+    setActivities(
+      (data.activities ?? []).map((a: any) => ({
+        ...a,
+        highlights: JSON.stringify(a.highlights ?? []),
+      }))
+    );
+  }
+
+  async function seedActivities() {
+    setBusy('seed');
+    const res = await fetch('/api/admin/activities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ seed: true }),
+    });
+    const data = await res.json();
+    setBusy(null);
+    if (!res.ok) return flash('err', data.error || '匯入失敗');
+    flash('ok', `已匯入 ${data.added} 個內建活動`);
+    await loadActivities();
+    startTransition(() => router.refresh());
+  }
+
+  async function saveActivity() {
+    if (!editing) return;
+    if (!editing.title.trim()) return flash('err', '請填寫活動名稱');
+    setBusy('activity');
+    const isEdit = Boolean(editing.id);
+    const highlights = (editing.highlights || '')
+      .split('\n')
+      .map((x) => x.trim())
+      .filter(Boolean);
+
+    const res = await fetch('/api/admin/activities', {
+      method: isEdit ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...editing, highlights, id: editing.id }),
+    });
+    const data = await res.json();
+    setBusy(null);
+    if (!res.ok) return flash('err', data.error || '儲存失敗');
+    flash('ok', isEdit ? '活動已更新' : '活動已新增');
+    setEditing(null);
+    await loadActivities();
+    startTransition(() => router.refresh());
+  }
+
+  async function togglePublish(a: ActivityRow) {
+    setBusy(a.id);
+    const res = await fetch('/api/admin/activities', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: a.id, published: !a.published }),
+    });
+    setBusy(null);
+    if (!res.ok) return flash('err', '更新失敗');
+    flash('ok', a.published ? '已下架（前台不顯示）' : '已上架');
+    await loadActivities();
+    startTransition(() => router.refresh());
+  }
+
+  async function deleteActivity(a: ActivityRow) {
+    if (!window.confirm(`確定刪除「${a.title}」？此動作無法復原。`)) return;
+    setBusy(a.id);
+    const res = await fetch(`/api/admin/activities?id=${a.id}`, { method: 'DELETE' });
+    const data = await res.json();
+    setBusy(null);
+    if (!res.ok) return flash('err', data.error || '刪除失敗');
+    flash('ok', '活動已刪除');
+    await loadActivities();
+    startTransition(() => router.refresh());
+  }
+
+  const settingGroups = Array.from(new Set(SETTING_FIELDS.map((f) => f.group)));
+
   return (
     <>
       <section className="section pt-12">
         <div className="container-msw">
           {/* Tabs */}
-          <div className="flex gap-2 rounded-xl border border-white/10 bg-ink2 p-1.5">
+          <div className="flex flex-wrap gap-2 rounded-xl border border-white/10 bg-ink2 p-1.5">
             {(
               [
                 ['review', `待確認截圖 (${pending.length})`],
@@ -288,12 +457,14 @@ export function AdminConsole({
                 ['winners', `達成名單 (${winners.length})`],
                 ['coupons', `優惠券 (${totalCoupons})`],
                 ['members', `會員 (${members.length})`],
+                ['activities', `活動管理 (${activities.length})`],
+                ['settings', '網站設定'],
               ] as const
             ).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition ${
+                className={`flex-1 whitespace-nowrap rounded-lg px-3 py-2.5 text-[13px] font-bold transition ${
                   tab === key
                     ? 'bg-cobaltBright text-white'
                     : 'text-white/50 hover:bg-white/5 hover:text-white'
@@ -782,8 +953,446 @@ export function AdminConsole({
               </div>
             </div>
           )}
+
+          {/* ============ 活動管理 ============ */}
+          {tab === 'activities' && (
+            <div className="mt-8 space-y-6">
+              <div className="rounded-2xl border border-white/10 bg-ink2 p-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div>
+                    <h2 className="h3">活動管理</h2>
+                    <p className="mt-1 text-xs text-white/45">
+                      新增／編輯前台「活動」頁的內容。下架的活動不會出現在前台，但資料保留。
+                    </p>
+                  </div>
+                  <div className="ml-auto flex flex-wrap gap-3">
+                    {activities.length === 0 && (
+                      <button
+                        disabled={busy === 'seed'}
+                        onClick={seedActivities}
+                        className="btn-ghost !py-3 !text-sm"
+                      >
+                        {busy === 'seed' ? '匯入中…' : '匯入三個內建活動'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setEditing({ ...EMPTY_ACTIVITY })}
+                      className="btn-cobalt !py-3 !text-sm"
+                    >
+                      ＋ 新增活動
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-white/10">
+                <table className="w-full min-w-[760px] text-sm">
+                  <thead className="bg-ink3 text-left text-xs uppercase tracking-wider text-white/50">
+                    <tr>
+                      <th className="px-5 py-4">活動</th>
+                      <th className="px-5 py-4">時間</th>
+                      <th className="px-5 py-4">地點</th>
+                      <th className="px-5 py-4">積分</th>
+                      <th className="px-5 py-4 text-center">狀態</th>
+                      <th className="px-5 py-4 text-right">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {activities.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-5 py-14 text-center text-white/40">
+                          尚未建立活動（前台目前顯示內建預設內容）
+                        </td>
+                      </tr>
+                    ) : (
+                      activities.map((a) => (
+                        <tr key={a.id} className="hover:bg-white/[.02]">
+                          <td className="px-5 py-4">
+                            <p className="font-semibold">{a.title}</p>
+                            <p className="text-xs text-white/40">
+                              /events/{a.slug}
+                            </p>
+                          </td>
+                          <td className="px-5 py-4 text-white/60">{a.schedule}</td>
+                          <td className="px-5 py-4 text-white/60">{a.location}</td>
+                          <td className="px-5 py-4 text-cobaltBright">{a.points}</td>
+                          <td className="px-5 py-4 text-center">
+                            {a.published ? (
+                              <span className="chip-approved">上架中</span>
+                            ) : (
+                              <span className="chip-pending">已下架</span>
+                            )}
+                          </td>
+                          <td className="px-5 py-4">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() =>
+                                  setEditing({
+                                    ...a,
+                                    highlights: (() => {
+                                      try {
+                                        return JSON.parse(a.highlights || '[]').join('\n');
+                                      } catch {
+                                        return '';
+                                      }
+                                    })(),
+                                  })
+                                }
+                                className="rounded-lg bg-cobaltBright px-3 py-1.5 text-xs font-bold text-white transition hover:bg-cobalt"
+                              >
+                                編輯
+                              </button>
+                              <button
+                                disabled={busy === a.id}
+                                onClick={() => togglePublish(a)}
+                                className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10"
+                              >
+                                {a.published ? '下架' : '上架'}
+                              </button>
+                              <button
+                                disabled={busy === a.id}
+                                onClick={() => deleteActivity(a)}
+                                className="rounded-lg border border-energy/50 px-3 py-1.5 text-xs font-bold text-energyBright transition hover:bg-energy/15"
+                              >
+                                刪除
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ============ 網站設定 ============ */}
+          {tab === 'settings' && (
+            <div className="mt-8 space-y-6">
+              <div className="rounded-2xl border border-cobaltBright/30 bg-cobaltBright/5 p-5">
+                <h2 className="h3">網站設定</h2>
+                <p className="mt-2 text-sm text-white/55">
+                  改完按「儲存設定」就會立刻套用到前台，不需要重新部署。
+                  想還原某一項，把它清空後儲存即可回到預設值。
+                </p>
+              </div>
+
+              {/* 分組 */}
+              <div className="flex flex-wrap gap-2">
+                {settingGroups.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setSettingGroup(g)}
+                    className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                      settingGroup === g
+                        ? 'bg-white text-ink'
+                        : 'border border-white/15 text-white/60 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-5 rounded-2xl border border-white/10 bg-ink2 p-6">
+                {SETTING_FIELDS.filter((f) => f.group === settingGroup).map((f) => (
+                  <div key={f.key}>
+                    <label className="label">{f.label}</label>
+
+                    {f.type === 'textarea' && (
+                      <textarea
+                        rows={4}
+                        value={settings[f.key] ?? ''}
+                        onChange={(e) =>
+                          setSettings((s) => ({ ...s, [f.key]: e.target.value }))
+                        }
+                        className="input"
+                      />
+                    )}
+
+                    {f.type === 'text' && (
+                      <input
+                        value={settings[f.key] ?? ''}
+                        onChange={(e) =>
+                          setSettings((s) => ({ ...s, [f.key]: e.target.value }))
+                        }
+                        className="input"
+                      />
+                    )}
+
+                    {f.type === 'color' && (
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={/^#[0-9a-f]{6}$/i.test(settings[f.key] || '')
+                            ? settings[f.key]
+                            : '#000000'}
+                          onChange={(e) =>
+                            setSettings((s) => ({
+                              ...s,
+                              [f.key]: e.target.value.toUpperCase(),
+                            }))
+                          }
+                          className="h-11 w-16 cursor-pointer rounded-lg border border-white/15 bg-transparent"
+                        />
+                        <input
+                          value={settings[f.key] ?? ''}
+                          onChange={(e) =>
+                            setSettings((s) => ({ ...s, [f.key]: e.target.value }))
+                          }
+                          placeholder="#0057FF"
+                          className="input flex-1 font-mono"
+                        />
+                      </div>
+                    )}
+
+                    {f.type === 'image' && (
+                      <div className="flex flex-wrap items-center gap-4">
+                        {settings[f.key] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={settings[f.key]}
+                            alt="預覽"
+                            className="h-16 w-16 rounded-xl border border-white/15 object-contain"
+                          />
+                        ) : (
+                          <span className="grid h-16 w-16 place-items-center rounded-xl border border-dashed border-white/20 text-xs text-white/40">
+                            未設定
+                          </span>
+                        )}
+                        <label className="btn-ghost cursor-pointer !py-2.5 !text-sm">
+                          {uploadingKey === f.key ? '上傳中…' : '上傳圖片'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) uploadImage(f.key, file);
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                        {settings[f.key] && (
+                          <button
+                            onClick={() => setSettings((s) => ({ ...s, [f.key]: '' }))}
+                            className="text-sm text-white/45 underline transition hover:text-energyBright"
+                          >
+                            移除（改回文字 Logo）
+                          </button>
+                        )}
+                        <input
+                          value={settings[f.key] ?? ''}
+                          onChange={(e) =>
+                            setSettings((s) => ({ ...s, [f.key]: e.target.value }))
+                          }
+                          placeholder="或直接貼上圖片網址"
+                          className="input mt-1 w-full"
+                        />
+                      </div>
+                    )}
+
+                    {f.hint && <p className="mt-2 text-xs text-white/40">{f.hint}</p>}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  disabled={busy === 'settings'}
+                  onClick={() => saveSettings()}
+                  className="btn-primary"
+                >
+                  {busy === 'settings' ? '儲存中…' : '💾 儲存全部設定'}
+                </button>
+                <a
+                  href="/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-ghost"
+                >
+                  開新視窗看前台 →
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* 活動編輯彈窗 */}
+      {editing && (
+        <div className="fixed inset-0 z-[95] overflow-y-auto bg-black/80 p-5">
+          <div className="mx-auto my-8 max-w-2xl rounded-2xl border border-white/10 bg-ink2 p-7">
+            <h3 className="h3">
+              {editing.id ? `編輯活動：${editing.title}` : '新增活動'}
+            </h3>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label className="label">活動名稱 *</label>
+                <input
+                  value={editing.title}
+                  onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                  className="input"
+                  placeholder="例如：週三核心訓練班"
+                />
+              </div>
+              <div>
+                <label className="label">副標題</label>
+                <input
+                  value={editing.subtitle}
+                  onChange={(e) => setEditing({ ...editing, subtitle: e.target.value })}
+                  className="input"
+                  placeholder="例如：每週三 19:30 – 20:30"
+                />
+              </div>
+              <div>
+                <label className="label">分類標籤</label>
+                <input
+                  value={editing.tag}
+                  onChange={(e) => setEditing({ ...editing, tag: e.target.value })}
+                  className="input"
+                  placeholder="常態活動 / 月度挑戰 / 課程"
+                />
+              </div>
+              <div>
+                <label className="label">網址代稱（英文）</label>
+                <input
+                  value={editing.slug}
+                  onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
+                  className="input"
+                  placeholder="留空會自動用活動名稱產生"
+                />
+              </div>
+              <div>
+                <label className="label">顯示順序</label>
+                <input
+                  type="number"
+                  value={editing.sortOrder}
+                  onChange={(e) =>
+                    setEditing({ ...editing, sortOrder: Number(e.target.value) })
+                  }
+                  className="input"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">封面圖片</label>
+                <div className="flex flex-wrap items-center gap-3">
+                  {editing.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={editing.image}
+                      alt="預覽"
+                      className="h-14 w-20 rounded-lg border border-white/15 object-cover"
+                    />
+                  )}
+                  <label className="btn-ghost cursor-pointer !py-2.5 !text-sm">
+                    上傳圖片
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        e.target.value = '';
+                        if (!file) return;
+                        const fd = new FormData();
+                        fd.append('file', file);
+                        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+                        const data = await res.json();
+                        if (res.ok) setEditing({ ...editing, image: data.url });
+                        else flash('err', data.error || '上傳失敗');
+                      }}
+                    />
+                  </label>
+                  <input
+                    value={editing.image}
+                    onChange={(e) => setEditing({ ...editing, image: e.target.value })}
+                    className="input min-w-[220px] flex-1"
+                    placeholder="/images/street-workout.jpg"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="label">時間</label>
+                <input
+                  value={editing.schedule}
+                  onChange={(e) => setEditing({ ...editing, schedule: e.target.value })}
+                  className="input"
+                  placeholder="每週三 19:30 – 20:30"
+                />
+              </div>
+              <div>
+                <label className="label">地點</label>
+                <input
+                  value={editing.location}
+                  onChange={(e) => setEditing({ ...editing, location: e.target.value })}
+                  className="input"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">積分說明</label>
+                <input
+                  value={editing.points}
+                  onChange={(e) => setEditing({ ...editing, points: e.target.value })}
+                  className="input"
+                  placeholder="每次出席 10 分"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">活動介紹</label>
+                <textarea
+                  rows={5}
+                  value={editing.description}
+                  onChange={(e) =>
+                    setEditing({ ...editing, description: e.target.value })
+                  }
+                  className="input"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">活動重點（一行一個）</label>
+                <textarea
+                  rows={4}
+                  value={editing.highlights}
+                  onChange={(e) =>
+                    setEditing({ ...editing, highlights: e.target.value })
+                  }
+                  className="input"
+                  placeholder={'新手友善\n不需自備器材\n現場簽到給積分'}
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="flex items-center gap-3 text-sm font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={editing.published}
+                    onChange={(e) =>
+                      setEditing({ ...editing, published: e.target.checked })
+                    }
+                    className="h-4 w-4 accent-cobaltBright"
+                  />
+                  立即上架（前台活動頁顯示）
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button
+                disabled={busy === 'activity'}
+                onClick={saveActivity}
+                className="btn-primary"
+              >
+                {busy === 'activity' ? '儲存中…' : '儲存活動'}
+              </button>
+              <button onClick={() => setEditing(null)} className="btn-ghost">
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 圖片放大 */}
       {lightbox && (

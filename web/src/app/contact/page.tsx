@@ -1,15 +1,20 @@
 import { ContactForm } from './ContactForm';
+import { getSettings, DEFAULT_SETTINGS } from '@/lib/site';
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: '聯絡我們' };
 
-const INFO = [
-  { icon: '📍', label: '訓練地點', value: '澳門黑沙環公園體育設施（每月公告為準）' },
-  { icon: '🕗', label: '定期訓練', value: '逢星期一 20:00 – 21:00' },
-  { icon: '✉️', label: 'Email', value: 'hello@msw-streetworkout.com' },
-  { icon: '📱', label: 'Instagram', value: '@msw.macau' },
-];
+export default async function ContactPage() {
+  const s = { ...DEFAULT_SETTINGS, ...(await getSettings()) };
 
-export default function ContactPage() {
+  const INFO = [
+    { icon: '📍', label: '訓練地點', value: s.contact_address },
+    { icon: '🕗', label: '定期訓練', value: '逢星期一 20:00 – 21:00' },
+    { icon: '✉️', label: 'Email', value: s.contact_email },
+    { icon: '📱', label: 'Instagram', value: s.contact_ig },
+    s.contact_phone ? { icon: '☎️', label: '電話', value: s.contact_phone } : null,
+  ].filter(Boolean) as { icon: string; label: string; value: string }[];
+
   return (
     <>
       <section className="border-b border-white/10 pt-32">

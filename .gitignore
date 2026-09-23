@@ -1,5 +1,31 @@
+# ---- 依賴與建置產物 ----
 node_modules/
 .next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- 機密：絕不可上傳 ----
+.env
+.env.local
+.env.production
+.env*.local
+*.pem
+*.key
+
+# ---- 使用者資料（含密碼雜湊、上傳截圖）----
+web/prisma/data/
+web/data/
+*.db
+*.db-journal
 web/public/uploads/
+
+# ---- 其他 ----
+npm-debug.log*
+yarn-error.log*
 *.log
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/

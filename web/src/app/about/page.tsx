@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { Reveal } from '@/components/Reveal';
 import { RULES } from '@/lib/points';
+import { getSettings, DEFAULT_SETTINGS } from '@/lib/site';
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: '關於我們' };
 
 const VALUES = [
@@ -30,7 +32,9 @@ const RULES_TABLE = [
   ['推薦新會員', '30 分', '對方完成註冊後'],
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const s = { ...DEFAULT_SETTINGS, ...(await getSettings()) };
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-white/10 pt-32">
@@ -42,14 +46,11 @@ export default function AboutPage() {
         <div className="container-msw relative pb-14">
           <span className="eyebrow">ABOUT MSW</span>
           <h1 className="h1 mt-5">
-            關於 MSW
+            {s.about_title}
             <br />
             <span className="text-gradient">街健館</span>
           </h1>
-          <p className="lead mt-6 max-w-2xl">
-            MSW 是 Macau Street Workout 的縮寫。二〇二四年，幾個在黑沙環公園練單槓的人
-            決定把「一起練」這件事變成一個有制度的社群——於是有了街健館。
-          </p>
+          <p className="lead mt-6 max-w-2xl whitespace-pre-line">{s.about_intro}</p>
         </div>
       </section>
 

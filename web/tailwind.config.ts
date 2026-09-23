@@ -5,15 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // MSW 街健館 品牌色票
-        ink: '#0F0F0F', // 主背景 / 深色
-        ink2: '#1A1A1A', // 深色卡片
-        ink3: '#262626', // 深色描邊
-        mist: '#F5F5F7', // 淺色背景
-        cobalt: '#0047AB', // 主要藍色（穩定）
-        cobaltBright: '#0057FF', // 主要藍色（數位感 / hover）
-        energy: '#E3001B', // 強調紅
-        energyBright: '#FF2D2D', // 強調紅（hover）
+        // MSW 街健館 品牌色票（以 CSS 變數驅動，後台「網站設定」可即時改色）
+        ink: 'rgb(var(--c-ink) / <alpha-value>)', // 主背景 / 深色
+        ink2: 'rgb(var(--c-ink2) / <alpha-value>)', // 深色卡片
+        ink3: 'rgb(var(--c-ink3) / <alpha-value>)', // 深色描邊
+        mist: 'rgb(var(--c-mist) / <alpha-value>)', // 淺色背景
+        cobalt: 'rgb(var(--c-cobalt) / <alpha-value>)', // 主要藍色（穩定）
+        cobaltBright: 'rgb(var(--c-cobalt-bright) / <alpha-value>)', // 主要藍色（數位感 / hover）
+        energy: 'rgb(var(--c-energy) / <alpha-value>)', // 強調紅
+        energyBright: 'rgb(var(--c-energy-bright) / <alpha-value>)', // 強調紅（hover）
       },
       fontFamily: {
         sans: [

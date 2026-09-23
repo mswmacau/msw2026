@@ -12,8 +12,11 @@
     "db:studio": "prisma studio",
     "demo:reset": "node scripts/reset-demo.mjs",
     "test:e2e": "node scripts/e2e-test.mjs",
+    "test:cms": "node scripts/cms-test.mjs",
     "build:mysql": "prisma generate --schema=prisma/schema.mysql.prisma && next build",
-    "db:mysql": "prisma db push --schema=prisma/schema.mysql.prisma"
+    "db:mysql": "prisma db push --schema=prisma/schema.mysql.prisma",
+    "build:postgres": "prisma generate --schema=prisma/schema.postgres.prisma && next build",
+    "db:postgres": "prisma db push --schema=prisma/schema.postgres.prisma"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

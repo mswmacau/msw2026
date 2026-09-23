@@ -8,6 +8,7 @@ import {
   getMondayOfWeek,
   ymdLocal,
 } from '@/lib/points';
+import { getSettings, DEFAULT_SETTINGS } from '@/lib/site';
 import { AdminConsole } from './AdminConsole';
 
 export const dynamic = 'force-dynamic';
@@ -40,7 +41,7 @@ export default async function AdminPage() {
 
   const month = currentMonth();
   const thisMonday = getMondayOfWeek();
-  const [pending, members, monthAgg, winners, coupons, weekCheckIns, allMembers, memberList] =
+  const [pending, members, monthAgg, winners, coupons, weekCheckIns, allMembers, memberList, settings, activities] =
     await Promise.all([
     prisma.runRecord.findMany({
       where: { status: 'PENDING' },
@@ -88,6 +89,12 @@ export default async function AdminPage() {
       where: { role: 'MEMBER' },
       orderBy: { createdAt: 'asc' },
       select: { id: true, displayName: true, name: true, email: true },
+    }),
+    // 網站設定（Logo / 文字 / 配色）
+    getSettings(),
+    // 活動管理清單（含未上架）
+    prisma.activity.findMany({
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     }),
   ]);
 
@@ -169,6 +176,22 @@ export default async function AdminPage() {
           joinedAt: u.createdAt.toISOString(),
         }))}
         weekSessionDate={ymdLocal(thisMonday)}
+        initialSettings={{ ...DEFAULT_SETTINGS, ...settings }}
+        initialActivities={activities.map((a) => ({
+          id: a.id,
+          slug: a.slug,
+          title: a.title,
+          subtitle: a.subtitle,
+          image: a.image,
+          tag: a.tag,
+          schedule: a.schedule,
+          location: a.location,
+          points: a.points,
+          description: a.description,
+          highlights: a.highlights,
+          published: a.published,
+          sortOrder: a.sortOrder,
+        }))}
       />
     </>
   );

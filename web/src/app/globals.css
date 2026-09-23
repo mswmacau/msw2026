@@ -3,15 +3,18 @@
 @tailwind utilities;
 
 :root {
+  /* Tailwind 色票：RGB 三元组，後台可覆寫 */
+  --c-ink: 15 15 15; /* #0F0F0F */
+  --c-ink2: 26 26 26; /* #1A1A1A */
+  --c-ink3: 38 38 38; /* #262626 */
+  --c-mist: 245 245 247; /* #F5F5F7 */
+  --c-cobalt: 0 71 171; /* #0047AB */
+  --c-cobalt-bright: 0 87 255; /* #0057FF */
+  --c-energy: 227 0 27; /* #E3001B */
+  --c-energy-bright: 255 45 45; /* #FF2D2D */
+
   --ink: #0f0f0f;
-  --ink-2: #1a1a1a;
-  --ink-3: #262626;
   --white: #ffffff;
-  --mist: #f5f5f7;
-  --cobalt: #0047ab;
-  --cobalt-bright: #0057ff;
-  --energy: #e3001b;
-  --energy-bright: #ff2d2d;
 }
 
 * {
@@ -23,14 +26,14 @@ html {
 }
 
 body {
-  background: var(--ink);
+  background: rgb(var(--c-ink));
   color: var(--white);
   font-feature-settings: 'palt' 1;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--cobalt-bright);
+  background: rgb(var(--c-cobalt-bright));
   color: #fff;
 }
 
@@ -40,14 +43,14 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f0f0f;
+  background: rgb(var(--c-ink));
 }
 ::-webkit-scrollbar-thumb {
   background: #2a2a2a;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cobalt);
+  background: rgb(var(--c-cobalt));
 }
 
 @layer components {

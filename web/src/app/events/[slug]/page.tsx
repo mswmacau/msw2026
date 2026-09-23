@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const all = await getActivities();
-  const a = all.find((x) => x.slug === params.slug) || getActivityBySlug(params.slug);
+  const a = all.find((x) => x.slug === params.slug) || (await getActivityBySlug(params.slug));
   return { title: a?.title || '活動' };
 }
 
@@ -17,7 +17,7 @@ export default async function EventDetailPage({
 }) {
   const all = await getActivities();
   const activity =
-    all.find((x) => x.slug === params.slug) || getActivityBySlug(params.slug);
+    all.find((x) => x.slug === params.slug) || (await getActivityBySlug(params.slug));
   if (!activity) notFound();
 
   const others = all.filter((a) => a.slug !== activity.slug).slice(0, 2);

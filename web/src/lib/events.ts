@@ -1,5 +1,6 @@
 import { getEvents, stripHtml, type WpEvent } from './wp';
 import { RULES } from './points';
+import { prisma } from './prisma';
 
 export type Activity = {
   slug: string;
@@ -14,7 +15,7 @@ export type Activity = {
   highlights: string[];
 };
 
-/** WordPress 尚未建立內容時使用的內建活動（同時也是上線前的預設資料） */
+/** 內建活動：資料庫還沒有資料時的預設內容（後台「匯入預設活動」也是用這份） */
 export const FALLBACK_ACTIVITIES: Activity[] = [
   {
     slug: 'weekly-training',
@@ -87,17 +88,69 @@ function fromWp(e: WpEvent, i: number): Activity {
   };
 }
 
-/** WordPress 有內容就用 WordPress，否則用內建資料 */
+function fromDb(r: any): Activity {
+  let highlights: string[] = [];
+  try {
+    const parsed = JSON.parse(r.highlights || '[]');
+    if (Array.isArray(parsed)) highlights = parsed.map(String);
+  } catch {
+    highlights = [];
+  }
+  return {
+    slug: r.slug,
+    title: r.title,
+    subtitle: r.subtitle || '',
+    image: r.image || '/images/street-workout.jpg',
+    tag: r.tag || '活動',
+    schedule: r.schedule || '',
+    location: r.location || '',
+    points: r.points || '—',
+    description: r.description || '',
+    highlights,
+  };
+}
+
+async function readDb(): Promise<Activity[]> {
+  try {
+    const rows = await prisma.activity.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+    });
+    return rows.map(fromDb);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * 前台活動來源優先序：
+ * 1. 後台「活動管理」建立的活動（資料庫）
+ * 2. WordPress msw_event 文章
+ * 3. 內建預設活動
+ */
 export async function getActivities(): Promise<Activity[]> {
+  const db = await readDb();
+  if (db.length) {
+    // WordPress 有額外活動時接在後面，兩邊都顯示
+    const wp = await getEvents();
+    const mapped = wp?.length ? wp.map(fromWp) : [];
+    return [...db, ...mapped];
+  }
+
   const wp = await getEvents();
   if (wp && wp.length) {
     const mapped = wp.map(fromWp);
-    // 內建兩大核心活動永遠保留在最前
-    return [...FALLBACK_ACTIVITIES.slice(0, 2), ...mapped];
+    return [...FALLBACK_ACTIVITIES, ...mapped];
   }
   return FALLBACK_ACTIVITIES;
 }
 
-export function getActivityBySlug(slug: string): Activity | undefined {
+export async function getActivityBySlug(slug: string): Promise<Activity | undefined> {
+  try {
+    const row = await prisma.activity.findUnique({ where: { slug } });
+    if (row) return fromDb(row);
+  } catch {
+    /* 資料庫查不到就退回內建資料 */
+  }
   return FALLBACK_ACTIVITIES.find((a) => a.slug === slug);
 }

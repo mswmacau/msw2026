@@ -30,7 +30,21 @@ const GROUPS = [
   },
 ];
 
-export function Footer() {
+export function Footer({ settings }: { settings?: Record<string, string> }) {
+  const siteName = settings?.site_name || 'MSW 街健館';
+  const siteTagline = settings?.site_tagline || 'MACAU STREET WORKOUT';
+  const siteLogo = settings?.site_logo || '';
+  const footerIntro =
+    settings?.footer_intro ||
+    'MSW 街健館是澳門街頭健身社群，我們相信訓練不該被場地和時間綁住。每週一晚上八點，一起練；每個月三百公里，一起跑。';
+  const footerNote = settings?.footer_note || '澳門 · Macao, China';
+
+  const social = [
+    { key: 'IG', label: 'IG', value: settings?.contact_ig || '' },
+    { key: 'FB', label: 'FB', value: settings?.contact_fb || '' },
+    { key: 'YT', label: 'YT', value: settings?.contact_yt || '' },
+  ].filter((s) => s.value);
+
   return (
     <footer className="border-t border-white/10 bg-ink2">
       <div className="container-msw py-16">
@@ -38,30 +52,41 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cobaltBright to-cobalt font-black text-white">
-                M
-              </span>
+              {siteLogo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={siteLogo}
+                  alt={siteName}
+                  className="h-11 w-11 rounded-xl object-contain"
+                />
+              ) : (
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cobaltBright to-cobalt font-black text-white">
+                  {siteName.replace(/\s/g, '').charAt(0) || 'M'}
+                </span>
+              )}
               <span className="leading-none">
-                <span className="block text-lg font-black">MSW 街健館</span>
+                <span className="block text-lg font-black">{siteName}</span>
                 <span className="block text-[10px] tracking-[.18em] text-white/45">
-                  MACAU STREET WORKOUT
+                  {siteTagline}
                 </span>
               </span>
             </div>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/50">
-              MSW 街健館是澳門街頭健身社群，我們相信訓練不該被場地和時間綁住。
-              每週一晚上八點，一起練；每個月三百公里，一起跑。
+              {footerIntro}
             </p>
-            <div className="mt-6 flex gap-3">
-              {['IG', 'FB', 'YT'].map((s) => (
-                <span
-                  key={s}
-                  className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-[11px] font-bold text-white/60 transition hover:border-cobaltBright hover:text-white"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
+            {social.length > 0 && (
+              <div className="mt-6 flex gap-3">
+                {social.map((s) => (
+                  <span
+                    key={s.key}
+                    title={s.value}
+                    className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-[11px] font-bold text-white/60 transition hover:border-cobaltBright hover:text-white"
+                  >
+                    {s.label}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Links */}
@@ -89,9 +114,9 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40 sm:flex-row">
-          <p>© {new Date().getFullYear()} MSW 街健館 Macau Street Workout. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {siteName} {siteTagline}. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
-            澳門 · Macao, China
+            {footerNote}
             <span className="h-1 w-1 rounded-full bg-energy" />
             每週一 20:00 定期訓練
           </p>

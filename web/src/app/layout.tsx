@@ -3,6 +3,9 @@ import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { SessionProvider } from '@/components/SessionProvider';
+import { getSettings, themeCss, DEFAULT_SETTINGS } from '@/lib/site';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
@@ -20,18 +23,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // 網站名稱 / Logo / 配色 / 聯絡資訊等由後台「網站設定」控制
+  const settings = { ...DEFAULT_SETTINGS, ...(await getSettings()) };
+
   return (
     <html lang="zh-TW">
+      <head>
+        {/* 後台配色設定：覆寫全站 CSS 變數 */}
+        <style id="msw-theme">{themeCss(settings)}</style>
+      </head>
       <body className="min-h-screen bg-ink font-sans text-white antialiased">
         <SessionProvider>
-          <Navbar />
+          <Navbar settings={settings} />
           <main>{children}</main>
-          <Footer />
+          <Footer settings={settings} />
         </SessionProvider>
       </body>
     </html>

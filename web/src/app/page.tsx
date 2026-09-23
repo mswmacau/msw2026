@@ -3,6 +3,7 @@ import { Counter } from '@/components/Counter';
 import { Reveal } from '@/components/Reveal';
 import { prisma } from '@/lib/prisma';
 import { RULES, currentMonth } from '@/lib/points';
+import { getSettings, DEFAULT_SETTINGS } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,7 +85,8 @@ const PARTNERS = [
 ];
 
 export default async function HomePage() {
-  const stats = await getStats();
+  const [stats, s] = await Promise.all([getStats(), getSettings()]);
+  const hero = { ...DEFAULT_SETTINGS, ...s };
 
   return (
     <>
@@ -105,30 +107,26 @@ export default async function HomePage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-wide backdrop-blur">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-energy" />
-              澳門街頭健身社群 · MACAU STREET WORKOUT
+              {hero.hero_badge}
             </span>
 
             <h1 className="mt-7 h1">
-              一起練，一起跑
+              {hero.hero_title}
               <br />
-              <span className="text-gradient">走得比一個人更遠</span>
+              <span className="text-gradient">{hero.hero_title_highlight}</span>
             </h1>
 
-            <p className="lead mt-7 max-w-xl">
-              MSW 街健館讓你在澳門任何角落都能開始訓練。每週一晚上八點的定期訓練、
-              每月 {RULES.MONTHLY_KM_GOAL} 公里累積跑挑戰，配上會員積分與專屬優惠券——
-              把運動變成一件有回報的事。
-            </p>
+            <p className="lead mt-7 max-w-xl whitespace-pre-line">{hero.hero_subtitle}</p>
 
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/register" className="btn-primary">
-                立即加入會員
+                {hero.hero_cta_primary}
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
               <Link href="/events" className="btn-ghost">
-                查看近期活動
+                {hero.hero_cta_secondary}
               </Link>
             </div>
 
