@@ -92,12 +92,14 @@ export default async function EventDetailPage({
                   ['時間', activity.schedule],
                   ['地點', activity.location],
                   ['積分', activity.points],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="text-xs tracking-wider text-white/40">{k}</dt>
-                    <dd className="mt-1 font-semibold">{v}</dd>
-                  </div>
-                ))}
+                ]
+                  .filter(([, v]) => (v || '').trim())
+                  .map(([k, v]) => (
+                    <div key={k}>
+                      <dt className="text-xs tracking-wider text-white/40">{k}</dt>
+                      <dd className="mt-1 font-semibold">{v}</dd>
+                    </div>
+                  ))}
               </dl>
             </div>
 

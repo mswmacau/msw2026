@@ -74,15 +74,18 @@ function fromWp(e: WpEvent, i: number): Activity {
   const img =
     e._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
     FALLBACK_ACTIVITIES[i % FALLBACK_ACTIVITIES.length].image;
+  // WordPress 後台填的活動資訊（mu-plugin 註冊的 msw_meta）
+  const meta = (e as any).msw_meta || e.meta || {};
   return {
     slug: e.slug,
     title: stripHtml(e.title?.rendered || ''),
     subtitle: stripHtml(e.excerpt?.rendered || '').slice(0, 60),
     image: img,
     tag: 'WP 活動',
-    schedule: '請見活動內頁',
-    location: '澳門',
-    points: '—',
+    // 沒填就留空，前台會自動隱藏該欄位，不再顯示「請見活動內頁」這種佔位文字
+    schedule: String(meta.schedule || '').trim(),
+    location: String(meta.location || '').trim(),
+    points: String(meta.points || '').trim(),
     description: stripHtml(e.content?.rendered || ''),
     highlights: [],
   };

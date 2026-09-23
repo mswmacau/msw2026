@@ -78,14 +78,17 @@ export default async function EventsPage() {
                   </p>
 
                   <dl className="mt-6 space-y-2.5 border-t border-white/10 pt-5 text-sm">
-                    <div className="flex gap-3">
-                      <dt className="w-16 shrink-0 text-white/40">時間</dt>
-                      <dd className="font-semibold">{a.schedule}</dd>
-                    </div>
-                    <div className="flex gap-3">
-                      <dt className="w-16 shrink-0 text-white/40">積分</dt>
-                      <dd className="font-semibold text-cobaltBright">{a.points}</dd>
-                    </div>
+                    {[
+                      ['時間', a.schedule, 'font-semibold'],
+                      ['積分', a.points, 'font-semibold text-cobaltBright'],
+                    ]
+                      .filter(([, v]) => (v || '').trim())
+                      .map(([k, v, cls]) => (
+                        <div key={k} className="flex gap-3">
+                          <dt className="w-16 shrink-0 text-white/40">{k}</dt>
+                          <dd className={cls as string}>{v}</dd>
+                        </div>
+                      ))}
                   </dl>
 
                   <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold">
