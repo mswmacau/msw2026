@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
+import { clearActivitiesCache } from '@/lib/events';
 import { FALLBACK_ACTIVITIES } from '@/lib/events';
 
 /**
@@ -91,6 +92,7 @@ export async function POST(req: Request) {
         sortOrder: Number(b.sortOrder ?? 0),
       },
     });
+    clearActivitiesCache();
     return NextResponse.json({ ok: true, id: created.id, slug: created.slug });
   } catch (e: any) {
     console.error('[activities] 新增失敗：', e);
@@ -122,6 +124,7 @@ export async function PATCH(req: Request) {
     if (b.sortOrder !== undefined) data.sortOrder = Number(b.sortOrder);
 
     await prisma.activity.update({ where: { id }, data });
+    clearActivitiesCache();
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     console.error('[activities] 更新失敗：', e);
@@ -138,5 +141,6 @@ export async function DELETE(req: Request) {
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: '缺少 id' }, { status: 400 });
   await prisma.activity.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  clearActivitiesCache();
+    return NextResponse.json({ ok: true });
 }

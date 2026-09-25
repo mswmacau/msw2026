@@ -23,6 +23,8 @@ export type WpEvent = WpPost & {
 
 async function wpFetch<T>(path: string, revalidate = 60): Promise<T | null> {
   if (!WP) return null;
+  // 部署到 Vercel 時不會有本地 WordPress，直接略過，避免每次 request 都白等一次連線
+  if (process.env.VERCEL && /localhost|127\.0\.0\.1/.test(WP)) return null;
   try {
     const res = await fetch(`${WP}/wp-json/wp/v2${path}`, {
       headers: { Accept: 'application/json' },

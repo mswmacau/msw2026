@@ -105,7 +105,7 @@ export function LoginForm() {
         </form>
 
         <p className="mt-6 text-center text-xs text-white/35">
-          Demo 管理員：admin@msw.mo / msw2026admin
+          忘記密碼？請聯絡管理員協助重設。
         </p>
       </div>
     </div>

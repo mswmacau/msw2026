@@ -113,13 +113,25 @@ function fromDb(r: any): Activity {
   };
 }
 
+// 短暫快取（30 秒）：減少 Vercel ↔ Neon 跨區查詢造成的頁面延遲
+let dbCache: { at: number; data: Activity[] } | null = null;
+const DB_TTL = 30_000;
+
+/** 後台新增/修改活動後呼叫，讓前台立即更新 */
+export function clearActivitiesCache() {
+  dbCache = null;
+}
+
 async function readDb(): Promise<Activity[]> {
+  if (dbCache && Date.now() - dbCache.at < DB_TTL) return dbCache.data;
   try {
     const rows = await prisma.activity.findMany({
       where: { published: true },
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     });
-    return rows.map(fromDb);
+    const data = rows.map(fromDb);
+    dbCache = { at: Date.now(), data };
+    return data;
   } catch {
     return [];
   }

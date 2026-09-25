@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { domToast } from '@/lib/toast';
 
 export function RunUploader({ month }: { month: string }) {
   const router = useRouter();
@@ -55,7 +56,9 @@ export function RunUploader({ month }: { month: string }) {
     setScreenshotUrl('');
     if (fileRef.current) fileRef.current.value = '';
     setMsg({ type: 'ok', text: '已送出，等待管理員確認 👍' });
-    router.refresh();
+    // 用 DOM 提示確保一定看得到（router.refresh() 會重掛元件，React state 會被清掉）
+    domToast('ok', '已送出，等待管理員確認 👍');
+    setTimeout(() => router.refresh(), 1200);
   }
 
   return (

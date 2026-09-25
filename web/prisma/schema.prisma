@@ -183,3 +183,13 @@ model Activity {
 
   @@index([published, sortOrder])
 }
+
+// ---------- 上傳圖片（雲端環境無法寫入硬碟時，改存資料庫）----------
+model MediaAsset {
+  id         String   @id @default(cuid())
+  mime       String
+  data       Bytes
+  size       Int
+  uploaderId String?
+  createdAt  DateTime @default(now())
+}

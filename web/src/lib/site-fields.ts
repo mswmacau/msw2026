@@ -31,6 +31,14 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   theme_primary: '#0057FF',
   theme_accent: '#E3001B',
 
+  // 字型：填 CSS font-family 字串，例如 "Noto Sans TC", sans-serif
+  theme_font: '',
+  // 進階：管理員可自行加 CSS（例如改圓角、間距、按鈕樣式）
+  custom_css: '',
+
+  // 首頁背景圖（留空用預設圖）
+  hero_background: '',
+
   contact_email: 'hello@msw-streetworkout.com',
   contact_phone: '',
   contact_address: '澳門黑沙環公園體育設施（每月公告為準）',
@@ -95,6 +103,23 @@ export const SETTING_FIELDS: {
     hint: '預設 #E3001B（活力紅）',
   },
 
+  {
+    group: '字型與進階樣式',
+    key: 'theme_font',
+    label: '全站字型',
+    type: 'text',
+    hint:
+      '填 CSS font-family，例如："Noto Sans TC", sans-serif ／ "Inter", sans-serif ／ system-ui（留空用預設）',
+  },
+  {
+    group: '字型與進階樣式',
+    key: 'custom_css',
+    label: '自訂 CSS（進階）',
+    type: 'textarea',
+    hint:
+      '只有管理員看得到此欄位。可直接寫 CSS 覆寫任何樣式，例如：.btn-primary{border-radius:999px;}',
+  },
+
   { group: '首頁主視覺', key: 'hero_badge', label: '上方小標籤', type: 'text' },
   { group: '首頁主視覺', key: 'hero_title', label: '主標題（第一行）', type: 'text' },
   {
@@ -106,6 +131,13 @@ export const SETTING_FIELDS: {
   { group: '首頁主視覺', key: 'hero_subtitle', label: '主標題下方說明', type: 'textarea' },
   { group: '首頁主視覺', key: 'hero_cta_primary', label: '主按鈕文字', type: 'text' },
   { group: '首頁主視覺', key: 'hero_cta_secondary', label: '次按鈕文字', type: 'text' },
+  {
+    group: '首頁主視覺',
+    key: 'hero_background',
+    label: '首頁背景圖片',
+    type: 'image',
+    hint: '留空則用預設背景。建議橫向大圖（1920×1080 以上）',
+  },
 
   { group: '關於我們', key: 'about_title', label: '頁面標題', type: 'text' },
   { group: '關於我們', key: 'about_intro', label: '簡介文字', type: 'textarea' },

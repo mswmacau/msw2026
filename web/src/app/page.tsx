@@ -94,7 +94,9 @@ export default async function HomePage() {
       <section className="relative flex min-h-[92vh] items-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/images/hero-workout.jpg)' }}
+          style={{
+            backgroundImage: `url(${hero.hero_background || '/images/hero-workout.jpg'})`,
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 to-ink/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/70" />

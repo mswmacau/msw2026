@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { domToast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import { SETTING_FIELDS } from '@/lib/site-fields';
 
@@ -126,9 +127,20 @@ export function AdminConsole({
   const [toast, setToast] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [members, setMembers] = useState(initialMembers);
   const [memberQuery, setMemberQuery] = useState('');
-  const [tab, setTab] = useState<
-    'review' | 'winners' | 'training' | 'coupons' | 'members' | 'settings' | 'activities'
-  >('review');
+  const TABS = ['review', 'winners', 'training', 'coupons', 'members', 'settings', 'activities'] as const;
+  type TabKey = (typeof TABS)[number];
+  // 記住目前分頁：即使 router.refresh() 讓元件重新掛載，也不會被彈回第一頁
+  const [tab, setTabState] = useState<TabKey>(() => {
+    if (typeof window === 'undefined') return 'review';
+    const saved = window.sessionStorage.getItem('msw-admin-tab');
+    return (saved as TabKey) || 'review';
+  });
+  function setTab(key: TabKey) {
+    setTabState(key);
+    try {
+      window.sessionStorage.setItem('msw-admin-tab', key);
+    } catch {}
+  }
 
   // ---- 網站設定 ----
   const [settings, setSettings] = useState(initialSettings);
@@ -149,6 +161,7 @@ export function AdminConsole({
 
   function flash(type: 'ok' | 'err', text: string) {
     setToast({ type, text });
+    domToast(type, text); // 不受 router.refresh() 重新掛載影響
     setTimeout(() => setToast(null), 3200);
   }
 

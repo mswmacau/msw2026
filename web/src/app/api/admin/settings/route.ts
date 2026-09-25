@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
-import { DEFAULT_SETTINGS } from '@/lib/site';
+import { DEFAULT_SETTINGS, clearSettingsCache } from '@/lib/site';
 
 /** GET：目前設定（含預設值） */
 export async function GET() {
@@ -35,6 +35,7 @@ export async function PUT(req: Request) {
       });
     }
 
+    clearSettingsCache(); // 讓前台立即套用新設定
     return NextResponse.json({ ok: true, updated: entries.length });
   } catch (e: any) {
     console.error('[settings] 更新失敗：', e);
@@ -51,5 +52,6 @@ export async function DELETE(req: Request) {
   const key = searchParams.get('key');
   if (!key) return NextResponse.json({ error: '缺少 key' }, { status: 400 });
   await prisma.siteSetting.deleteMany({ where: { key } });
+  clearSettingsCache();
   return NextResponse.json({ ok: true });
 }
